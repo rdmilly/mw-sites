@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Helix — Persistent memory for AI</title>
+<meta name="description" content="Helix is a persistent memory layer for AI. It learns your patterns, conventions, and decisions — and carries them into every new conversation.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..600&family=Manrope:wght@300..700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════════════════
+   HELIX — MERCURY EDITION
+   One accent, one story, outside-in narrative
+   ═══════════════════════════════════════════════════════ */
+:root{
+  /* Single hue drives the whole system */
+  --hue: 218;
+
+  --bg:       oklch(14% 0.018 var(--hue));
+  --bg-lift:  oklch(19% 0.022 var(--hue));
+  --bg-high:  oklch(24% 0.026 var(--hue));
+
+  --ink:      oklch(96% 0.012 var(--hue));
+  --ink-2:    oklch(82% 0.014 var(--hue));
+  --muted:    oklch(58% 0.016 var(--hue));
+
+  --accent:     oklch(78% 0.11 var(--hue));        /* mercury blue */
+  --accent-hi:  oklch(86% 0.09 var(--hue));        /* highlight */
+  --accent-dim: oklch(78% 0.11 var(--hue) / 0.15);
+  --accent-glow:oklch(78% 0.11 var(--hue) / 0.40);
+
+  --border:        oklch(96% 0.012 var(--hue) / 0.08);
+  --border-strong: oklch(96% 0.012 var(--hue) / 0.18);
+
+  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --sans:  "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, monospace;
+
+  /* Fluid type — no breakpoint jumps */
+  --fs-xs:   clamp(0.72rem, 0.70rem + 0.1vw, 0.78rem);
+  --fs-sm:   clamp(0.86rem, 0.82rem + 0.2vw, 0.94rem);
+  --fs-base: clamp(1rem,    0.95rem + 0.25vw, 1.12rem);
+  --fs-lg:   clamp(1.2rem,  1.1rem  + 0.5vw, 1.45rem);
+  --fs-xl:   clamp(1.9rem,  1.5rem  + 1.8vw, 3rem);
+  --fs-2xl:  clamp(2.4rem,  2rem    + 2vw,   4rem);
+  --fs-display: clamp(3.4rem, 2.4rem + 6vw, 10rem);
+
+  --pad-x: clamp(1.25rem, 0.8rem + 3vw, 4rem);
+  --max: 1200px;
+}
+
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+html{ scroll-behavior:smooth; }
+
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:var(--fs-base);
+  line-height:1.55;
+  font-feature-settings: "ss01","cv11";
+  text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 90% 60% at 50% 0%, oklch(78% 0.11 var(--hue) / 0.08) 0%, transparent 70%),
+    radial-gradient(circle at 20% 90%, oklch(78% 0.11 var(--hue) / 0.05) 0%, transparent 55%);
+  background-attachment: fixed;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none;
+  opacity:0.04; z-index:1;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto; }
+  *,*::before,*::after{ animation-duration: 0.001s !important; transition-duration: 0.001s !important; }
+}
+
+.shell{ max-width:var(--max); margin:0 auto; padding:0 var(--pad-x); position:relative; z-index:3; }
+
+section{ padding: clamp(5rem, 3rem + 6vw, 10rem) 0; position:relative; }
+
+/* ─────────── Typography ─────────── */
+h1,h2,h3,h4{
+  font-family:var(--serif);
+  font-weight:400;
+  line-height:1.05;
+  letter-spacing:-0.022em;
+  color:var(--ink);
+}
+h2{ font-size:var(--fs-2xl); letter-spacing:-0.03em; line-height:1.05; max-width:20ch; }
+h3{ font-size:var(--fs-xl); letter-spacing:-0.02em; line-height:1.15; }
+h4{
+  font-family:var(--sans);
+  font-weight:600;
+  font-size:var(--fs-sm);
+  letter-spacing:0.02em;
+  text-transform:uppercase;
+  color:var(--ink-2);
+  letter-spacing:0;
+  text-transform:none;
+}
+
+.eyebrow{
+  font-family:var(--mono);
+  font-size:0.72rem;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--accent);
+  margin-bottom:1.4rem;
+  display:inline-flex;
+  align-items:center;
+  gap:0.7rem;
+}
+.eyebrow::before{
+  content:""; width:24px; height:1px;
+  background:var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+
+p{ max-width:62ch; color:var(--ink-2); }
+p.lede{
+  font-family:var(--serif);
+  font-size:var(--fs-lg);
+  line-height:1.45;
+  color:var(--ink);
+  max-width:52ch;
+}
+
+a{ color:var(--ink); text-decoration:none; transition: color 0.2s; }
+a:hover{ color:var(--accent); }
+strong{ color:var(--ink); font-weight:600; }
+em{ font-style:italic; }
+
+/* ─────────── Nav ─────────── */
+nav{
+  position:fixed; top:0; left:0; right:0;
+  z-index:100;
+  backdrop-filter: blur(14px) saturate(1.4);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  background: oklch(14% 0.018 var(--hue) / 0.70);
+  border-bottom: 1px solid var(--border);
+}
+nav .shell{
+  display:flex; align-items:center; justify-content:space-between;
+  padding-top:1rem; padding-bottom:1rem;
+}
+.nav-brand{
+  font-family:var(--serif);
+  font-size:1.45rem;
+  font-weight:500;
+  letter-spacing:-0.02em;
+  display:inline-flex; align-items:center; gap:0.55rem;
+}
+.nav-brand .dot{
+  width:8px; height:8px; border-radius:50%;
+  background:var(--accent);
+  box-shadow: 0 0 16px var(--accent-glow), inset 0 0 4px var(--accent-hi);
+  animation: breathe 3.6s ease-in-out infinite;
+}
+@keyframes breathe{
+  0%,100%{ opacity:0.7; transform:scale(1); }
+  50%    { opacity:1;   transform:scale(1.2); }
+}
+.nav-links{ display:flex; gap:2.2rem; font-size:0.86rem; }
+.nav-links a{ color:var(--ink-2); font-weight:500; }
+.nav-cta{
+  font-family:var(--mono); font-size:0.76rem;
+  padding:0.5rem 0.95rem;
+  border:1px solid var(--border-strong);
+  border-radius:100px;
+  letter-spacing:0.04em;
+}
+.nav-cta:hover{ border-color:var(--accent); color:var(--accent); box-shadow: 0 0 14px var(--accent-glow); }
+@media (max-width:820px){ .nav-links{ display:none; } }
+
+/* ─────────── Buttons ─────────── */
+.btn{
+  display:inline-flex; align-items:center; gap:0.6rem;
+  font-family:var(--sans); font-size:0.94rem; font-weight:500;
+  padding:1rem 1.7rem;
+  border-radius:100px;
+  transition: all 0.25s ease;
+  cursor:pointer; border:none;
+}
+.btn-primary{
+  background:var(--accent);
+  color: oklch(14% 0.018 var(--hue));
+  box-shadow: 0 0 0 1px var(--accent), 0 0 28px var(--accent-glow);
+}
+.btn-primary:hover{
+  background:var(--ink);
+  color:var(--bg);
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px var(--ink), 0 0 32px oklch(96% 0.012 var(--hue) / 0.25);
+}
+.btn-ghost{
+  background:transparent;
+  color:var(--ink);
+  border:1px solid var(--border-strong);
+}
+.btn-ghost:hover{ border-color:var(--accent); color:var(--accent); }
+.btn-arrow{ transition: transform 0.25s; }
+.btn:hover .btn-arrow{ transform: translateX(4px); }
+
+/* ═══════════════════════════════════════════════════════
+   HERO — canvas helix behind, type in front
+   ═══════════════════════════════════════════════════════ */
+.hero{
+  min-height: 100vh;
+  padding-top: clamp(7rem, 5rem + 6vw, 12rem);
+  padding-bottom: clamp(4rem, 3rem + 3vw, 7rem);
+  display:flex; flex-direction:column; justify-content:center;
+  position:relative;
+  overflow:hidden;
+}
+#helix-canvas{
+  position:absolute;
+  inset:0;
+  width:100%; height:100%;
+  z-index:2;
+  opacity: 0.85;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
+}
+
+.hero .shell{ display:grid; gap:2.2rem; }
+.hero-label{
+  font-family:var(--mono); font-size:0.72rem;
+  letter-spacing:0.22em; text-transform:uppercase;
+  color:var(--muted);
+  display:flex; align-items:center; gap:0.9rem; flex-wrap:wrap;
+}
+.hero-label .pill{
+  display:inline-flex; align-items:center; gap:0.45rem;
+  padding:0.3rem 0.7rem;
+  border-radius:100px;
+  border:1px solid var(--border-strong);
+  background: oklch(14% 0.018 var(--hue) / 0.6);
+  color:var(--ink-2);
+  font-size:0.66rem;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.hero-label .pulse{
+  width:6px; height:6px; border-radius:50%;
+  background:var(--accent);
+  box-shadow: 0 0 0 0 var(--accent-glow);
+  animation: pulse 2.4s ease-out infinite;
+}
+@keyframes pulse{
+  0%   { box-shadow: 0 0 0 0 var(--accent-glow); }
+  100% { box-shadow: 0 0 0 14px oklch(78% 0.11 var(--hue) / 0); }
+}
+
+.hero h1{
+  font-family:var(--serif);
+  font-size: var(--fs-display);
+  font-weight:350;
+  line-height:0.92;
+  letter-spacing:-0.045em;
+  max-width: 11ch;
+}
+.hero h1 em{
+  font-style:italic;
+  font-weight:400;
+  color: var(--accent);
+  text-shadow: 0 0 40px var(--accent-glow);
+}
+
+.hero-sub{
+  font-family:var(--serif);
+  font-size: var(--fs-lg);
+  font-weight:300;
+  line-height:1.45;
+  color:var(--ink-2);
+  max-width: 48ch;
+}
+
+.hero-actions{
+  display:flex; gap:1rem; flex-wrap:wrap; align-items:center;
+  margin-top:0.6rem;
+}
+.hero-actions .btn-ghost{
+  background: oklch(14% 0.018 var(--hue) / 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Credibility strip — ONE place for stats */
+.cred-strip{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  margin-top: clamp(3rem, 2rem + 4vw, 6rem);
+  background: oklch(14% 0.018 var(--hue) / 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.cred-item{ padding: 1.5rem 1.2rem; border-left:1px solid var(--border); }
+.cred-item:first-child{ border-left:none; }
+.cred-num{
+  font-family:var(--serif);
+  font-size:var(--fs-lg);
+  font-weight:400;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+  line-height:1;
+  display:block;
+}
+.cred-label{
+  font-family:var(--mono); font-size:0.68rem;
+  color:var(--muted);
+  letter-spacing:0.12em; text-transform:uppercase;
+  margin-top:0.6rem;
+}
+@media (max-width:760px){
+  .cred-strip{ grid-template-columns: repeat(2, 1fr); }
+  .cred-item:nth-child(3){ border-left:none; }
+  .cred-item:nth-child(3), .cred-item:nth-child(4){ border-top:1px solid var(--border); }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 2: THE PROBLEM — relatable, zero jargon
+   ═══════════════════════════════════════════════════════ */
+.problem{ border-top:1px solid var(--border); background: oklch(14% 0.018 var(--hue)); }
+.problem .shell{ display:grid; gap:3rem; }
+.problem-intro{ max-width:62ch; }
+
+.problem-list{
+  display:grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap:0;
+  border-top:1px solid var(--border);
+  border-left:1px solid var(--border);
+}
+.problem-item{
+  padding: 1.8rem 1.6rem;
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  display:flex; gap:1.2rem; align-items:flex-start;
+  transition: background 0.3s;
+}
+.problem-item:hover{ background: oklch(19% 0.022 var(--hue) / 0.5); }
+.problem-item .idx{
+  font-family:var(--mono);
+  font-size:0.7rem;
+  color:var(--muted);
+  letter-spacing:0.1em;
+  padding-top:0.15rem;
+  flex-shrink:0;
+}
+.problem-item h3{
+  font-size:1.15rem;
+  font-family:var(--sans);
+  font-weight:600;
+  letter-spacing:0;
+  margin-bottom:0.4rem;
+}
+.problem-item p{ font-size:0.9rem; color:var(--ink-2); line-height:1.5; max-width:none; }
+@media (max-width:720px){
+  .problem-list{ grid-template-columns: 1fr; }
+}
+
+.pullquote{
+  font-family:var(--serif);
+  font-size: var(--fs-xl);
+  font-weight:300;
+  font-style:italic;
+  line-height:1.2;
+  color:var(--ink);
+  max-width:22ch;
+  margin: clamp(2rem, 1rem + 3vw, 5rem) 0 0;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--accent);
+  box-shadow: -2px 0 20px -8px var(--accent-glow);
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 3: THE PROMISE — what changes, plain English
+   ═══════════════════════════════════════════════════════ */
+.promise{ border-top:1px solid var(--border); }
+.promise .shell > .intro{ margin-bottom: 4rem; max-width:62ch; }
+
+.promise-list{ display:grid; gap: clamp(2rem, 1rem + 3vw, 4rem); }
+.promise-row{
+  display:grid;
+  grid-template-columns: minmax(120px, 1fr) 3fr 2fr;
+  gap: clamp(1.5rem, 1rem + 2vw, 4rem);
+  padding-bottom: clamp(2rem, 1rem + 3vw, 4rem);
+  border-bottom: 1px solid var(--border);
+  align-items:start;
+}
+.promise-row:last-child{ border-bottom:none; padding-bottom:0; }
+.promise-row .n{
+  font-family:var(--serif);
+  font-size: clamp(3rem, 2rem + 3vw, 5rem);
+  font-weight:300;
+  color: var(--accent);
+  line-height:0.9;
+  letter-spacing:-0.04em;
+  opacity:0.7;
+}
+.promise-row h3{
+  font-family:var(--serif);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+  line-height:1.15;
+  max-width:18ch;
+}
+.promise-row .detail{
+  font-size:0.95rem;
+  color:var(--ink-2);
+  line-height:1.6;
+}
+.promise-row .detail .example{
+  display:block;
+  margin-top:1rem;
+  padding: 1rem 1.2rem;
+  background: var(--bg-lift);
+  border-left: 2px solid var(--accent);
+  font-family:var(--mono);
+  font-size:0.82rem;
+  color:var(--ink-2);
+  line-height:1.6;
+}
+.promise-row .detail .example .lbl{
+  display:block;
+  color:var(--muted);
+  font-size:0.66rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  margin-bottom:0.4rem;
+}
+@media (max-width:860px){
+  .promise-row{ grid-template-columns: 1fr; gap: 1.2rem; }
+  .promise-row .n{ font-size:3rem; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 4: THE IDEA — epigenetics explained simply
+   ═══════════════════════════════════════════════════════ */
+.idea{
+  border-top:1px solid var(--border);
+  background: oklch(16% 0.02 var(--hue));
+  overflow:hidden;
+  position:relative;
+}
+.idea::before{
+  content:""; position:absolute;
+  top:10%; right:-10%;
+  width:60%; height:80%;
+  background: radial-gradient(ellipse, var(--accent-dim) 0%, transparent 60%);
+  pointer-events:none;
+  z-index:1;
+}
+.idea .shell{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(2rem, 1rem + 4vw, 6rem);
+  align-items:start;
+}
+@media (max-width:860px){ .idea .shell{ grid-template-columns:1fr; } }
+
+.idea .copy p{ margin-top:1.4rem; max-width:52ch; }
+.idea .copy p.closer{
+  font-family:var(--serif);
+  font-size:var(--fs-lg);
+  font-style:italic;
+  color:var(--ink);
+  margin-top:2rem;
+  max-width: 40ch;
+}
+
+.idea-card{
+  background: linear-gradient(180deg, var(--bg-lift) 0%, var(--bg) 100%);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: clamp(1.6rem, 1rem + 1.5vw, 2.4rem);
+  font-family:var(--mono);
+  font-size:0.82rem;
+  line-height:1.9;
+  position:relative;
+  overflow:hidden;
+}
+.idea-card::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:1px;
+  background: linear-gradient(90deg, transparent, var(--accent-hi), transparent);
+  box-shadow: 0 0 18px var(--accent-glow);
+}
+.idea-card .zone{ padding: 1.2rem 0; }
+.idea-card .zone + .zone{ border-top: 1px dashed var(--border-strong); }
+.idea-card .zone-label{
+  font-size:0.66rem;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:1rem;
+  display:flex; justify-content:space-between; align-items:baseline;
+}
+.idea-card .zone-label strong{
+  font-family:var(--serif);
+  font-size:1.05rem;
+  letter-spacing:-0.01em;
+  text-transform:none;
+  font-weight:500;
+  color:var(--ink);
+}
+.idea-card .zone-label .tag{
+  color:var(--accent);
+  font-size:0.66rem;
+}
+.idea-card .kv{ display:flex; gap:0.8rem; }
+.idea-card .k{ color:var(--muted); width:13ch; flex-shrink:0; }
+.idea-card .v{ color:var(--ink); }
+.idea-card .v.dim{ color:var(--ink-2); }
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 5: PRODUCTS — consumer-facing language
+   ═══════════════════════════════════════════════════════ */
+.products{ border-top:1px solid var(--border); }
+.products .intro{ margin-bottom: 4rem; max-width: 62ch; }
+
+.product-stack{ display:grid; gap:1rem; }
+.product{
+  display:grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: clamp(1.5rem, 1rem + 2vw, 4rem);
+  align-items:start;
+  padding: clamp(2rem, 1.5rem + 1vw, 3rem);
+  background: var(--bg-lift);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.3s, transform 0.3s;
+  position:relative;
+  overflow:hidden;
+}
+.product:hover{ border-color: var(--border-strong); }
+.product.featured{
+  border-color: var(--accent-dim);
+  background: linear-gradient(135deg, oklch(19% 0.04 var(--hue)) 0%, var(--bg-lift) 100%);
+}
+.product.featured::before{
+  content:""; position:absolute; top:0; left:0; width:3px; height:100%;
+  background: var(--accent);
+  box-shadow: 0 0 20px var(--accent-glow);
+}
+
+.product .tag{
+  font-family:var(--mono); font-size:0.7rem;
+  color:var(--muted);
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  margin-bottom:0.6rem;
+}
+.product.featured .tag{ color: var(--accent); }
+.product .name{
+  font-family:var(--serif);
+  font-size: clamp(1.8rem, 1.4rem + 1.2vw, 2.5rem);
+  font-weight:400;
+  letter-spacing:-0.025em;
+  line-height:1;
+  margin-bottom:0.5rem;
+}
+.product .who{
+  font-family:var(--sans); font-size:0.86rem;
+  color: var(--ink-2);
+  font-weight:500;
+}
+.product .body{
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+.product .body strong{ color: var(--ink); }
+.product .bullets{
+  list-style:none;
+  font-family:var(--mono);
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  display:flex; flex-direction:column; gap:0.4rem;
+}
+.product .bullets li{ display:flex; gap:0.5rem; align-items:flex-start; }
+.product .bullets li::before{
+  content:""; width:8px; height:1px;
+  background: var(--accent);
+  margin-top:0.55rem; flex-shrink:0;
+}
+.product .meta{ display:flex; flex-direction:column; gap:1rem; }
+.product .status{
+  font-family:var(--mono); font-size:0.74rem;
+  display:flex; gap:0.5rem; align-items:center;
+}
+.product .status .dot{
+  width:7px; height:7px; border-radius:50%;
+  background: oklch(72% 0.13 155);
+  box-shadow: 0 0 10px oklch(72% 0.13 155 / 0.7);
+}
+.product .status.soon .dot{ background: var(--muted); box-shadow:none; }
+.product .pricing{
+  font-family:var(--mono); font-size:0.74rem;
+  color:var(--ink-2);
+  padding: 0.6rem 0.8rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  letter-spacing:0.03em;
+}
+@media (max-width:900px){
+  .product{ grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════════════
+   SECTION 6: CTA
+   ═══════════════════════════════════════════════════════ */
+.cta{
+  border-top:1px solid var(--border);
+  background: oklch(16% 0.02 var(--hue));
+  text-align:center;
+  padding: clamp(6rem, 4rem + 6vw, 12rem) 0;
+  position:relative;
+  overflow:hidden;
+}
+.cta::before{
+  content:""; position:absolute;
+  top:0; left:50%; transform:translateX(-50%);
+  width:60%; max-width:800px; height:1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  box-shadow: 0 0 28px var(--accent-glow);
+}
+.cta .eyebrow{ justify-content:center; display:inline-flex; }
+.cta h2{
+  font-size: clamp(2.6rem, 2rem + 3.5vw, 5rem);
+  margin: 1.5rem auto;
+  max-width: 17ch;
+  line-height: 1.02;
+}
+.cta h2 em{ color: var(--accent); }
+.cta p.lede{
+  margin: 0 auto 2.5rem;
+  font-size: var(--fs-lg);
+}
+.cta .actions{ margin-top: 2rem; }
+.cta .actions .btn{ margin: 0.3rem; }
+.cta .footer-note{
+  margin-top: 3rem;
+  font-family:var(--mono);
+  font-size: 0.74rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+
+/* ─────────── Footer ─────────── */
+footer{
+  border-top: 1px solid var(--border);
+  padding: 3rem 0 2.5rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+footer .shell{
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:1rem;
+}
+footer .brand{ color: var(--ink-2); }
+footer a{ color: var(--muted); }
+footer a:hover{ color: var(--accent); }
+
+/* ─────────── Scroll reveal — CSS only where supported ─────────── */
+@supports (animation-timeline: view()){
+  .reveal{
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 22%;
+  }
+}
+@keyframes reveal-up{
+  from{ opacity:0; transform: translateY(20px); }
+  to  { opacity:1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce){
+  .reveal{ animation:none; opacity:1; transform:none; }
+}
+
+::selection{ background: var(--accent); color: var(--bg); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="shell">
+    <span class="nav-brand"><span class="dot"></span>Helix</span>
+    <div class="nav-links">
+      <a href="#problem">The problem</a>
+      <a href="#promise">What changes</a>
+      <a href="#idea">The idea</a>
+      <a href="#products">Products</a>
+    </div>
+    <a class="nav-cta" href="#cta">Get early access →</a>
+  </div>
+</nav>
+
+<!-- ═════════════ HERO ═════════════ -->
+<header class="hero">
+  <canvas id="helix-canvas" aria-hidden="true"></canvas>
+
+  <div class="shell">
+    <div class="hero-label">
+      <span class="pill"><span class="pulse"></span>v0.9 · in active build</span>
+      <span>persistent memory for AI</span>
+    </div>
+
+    <h1>Your AI should <em>remember.</em></h1>
+
+    <p class="hero-sub">
+      Helix is a memory layer that sits between you and your AI assistant.
+      It learns your patterns, your conventions, your decisions — and carries
+      them into every new conversation.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#cta" class="btn btn-primary">Request early access <span class="btn-arrow">→</span></a>
+      <a href="#problem" class="btn btn-ghost">See how it works</a>
+    </div>
+
+    <div class="cred-strip">
+      <div class="cred-item"><span class="cred-num">990</span><div class="cred-label">Patterns learned</div></div>
+      <div class="cred-item"><span class="cred-num">400+</span><div class="cred-label">Live symbols</div></div>
+      <div class="cred-item"><span class="cred-num">697</span><div class="cred-label">Tools routed</div></div>
+      <div class="cred-item"><span class="cred-num">45</span><div class="cred-label">Servers online</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ═════════════ SECTION 2: THE PROBLEM ═════════════ -->
+<section id="problem" class="problem">
+  <div class="shell">
+    <div class="problem-intro reveal">
+      <div class="eyebrow">The problem</div>
+      <h2>Every conversation starts from zero.</h2>
+      <p class="lede" style="margin-top:1.4rem;">
+        Your AI is brilliant — and amnesiac. The model doesn't know what you built
+        last week, what conventions you've settled on, or which decisions you've
+        already made. Every new chat begins at the same flat ceiling.
+      </p>
+    </div>
+
+    <div class="problem-list reveal">
+      <div class="problem-item">
+        <span class="idx">01</span>
+        <div>
+          <h3>You explain your stack. Every time.</h3>
+          <p>The AI asks what framework you use. Again. You paste the same three paragraphs of context you pasted yesterday.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <span class="idx">02</span>
+        <div>
+          <h3>Decisions disappear.</h3>
+          <p>You picked an approach three weeks ago. The AI proposes the opposite — because it has no memory of the conversation where you picked it.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <span class="idx">03</span>
+        <div>
+          <h3>Conventions drift.</h3>
+          <p>Your naming style, your folder layout, your patterns — the AI can't see any of them. Every session suggests something slightly different.</p>
+        </div>
+      </div>
+      <div class="problem-item">
+        <span class="idx">04</span>
+        <div>
+          <h3>Yesterday's work doesn't compound.</h3>
+          <p>Everything you built yesterday is invisible today. Every session has the same ceiling. Nothing you do makes tomorrow faster.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="pullquote reveal">Why does every session feel like the first time?</p>
+  </div>
+</section>
+
+<!-- ═════════════ SECTION 3: THE PROMISE ═════════════ -->
+<section id="promise" class="promise">
+  <div class="shell">
+    <div class="intro reveal">
+      <div class="eyebrow">What changes with Helix</div>
+      <h2>Your AI gets better the more you use it.</h2>
+      <p class="lede" style="margin-top:1.4rem;">
+        Three things happen when Helix is running. None of them require you to
+        configure anything. They just start being true.
+      </p>
+    </div>
+
+    <div class="promise-list">
+      <div class="promise-row reveal">
+        <div class="n">01</div>
+        <div>
+          <h3>It knows your conventions.</h3>
+          <div class="detail">
+            <p>Helix watches what you build. Your naming patterns, your architectural choices, the way you structure a module — it picks these up passively and makes them the default.</p>
+            <div class="example">
+              <span class="lbl">Example</span>
+              Ask for a new FastAPI endpoint. Helix already knows you use <code>snake_case</code>, Pydantic v2, your own auth decorator, and your team's error envelope format. No re-prompting.
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="promise-row reveal">
+        <div class="n">02</div>
+        <div>
+          <h3>It remembers decisions.</h3>
+          <div class="detail">
+            <p>The calls you make — "we're using Postgres not MongoDB", "our containers go on VPS2 not VPS1", "we've rejected library X for reason Y" — persist across every future conversation.</p>
+            <div class="example">
+              <span class="lbl">Example</span>
+              Three weeks later you ask a question that touches one of those decisions. Helix surfaces the earlier context automatically. You don't re-explain. The AI doesn't contradict itself.
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+
+      <div class="promise-row reveal">
+        <div class="n">03</div>
+        <div>
+          <h3>It gets faster over time.</h3>
+          <div class="detail">
+            <p>Patterns Helix has seen before don't need to be re-analyzed. Common phrases get compressed into short symbols. The scanner learns your language and stops paying for repeated work.</p>
+            <div class="example">
+              <span class="lbl">Example</span>
+              Month one: most of your prompts go through a language model for classification. Month three: that step is largely skipped — Helix generated the rules itself from your history.
+            </div>
+          </div>
+        </div>
+        <div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ SECTION 4: THE IDEA ═════════════ -->
+<section id="idea" class="idea">
+  <div class="shell">
+    <div class="copy reveal">
+      <div class="eyebrow">The idea</div>
+      <h2>Borrowed from biology.</h2>
+      <p>
+        In biology, <strong>epigenetics</strong> describes how experience leaves
+        marks on how genes are expressed — without changing the underlying DNA.
+        A cell exposed to repeated stress develops patterns that make it respond
+        faster next time. The organism adapts by <strong>annotating</strong>, not rewriting.
+      </p>
+      <p>
+        Helix does the same thing with your AI's knowledge. Every record has two
+        regions: a <strong>core identity</strong> that never changes, and a growing
+        layer of <strong>experience marks</strong> that the system adds as it observes
+        how you use it.
+      </p>
+      <p class="closer">
+        Memory that grows without corrupting what came before.
+      </p>
+    </div>
+
+    <div class="idea-card reveal" aria-label="How a record is structured">
+      <div class="zone">
+        <div class="zone-label">
+          <strong>Core identity</strong>
+          <span class="tag">never changes</span>
+        </div>
+        <div class="kv"><span class="k">id</span><span class="v">atom_a7f3x9</span></div>
+        <div class="kv"><span class="k">name</span><span class="v">verify_token</span></div>
+        <div class="kv"><span class="k">created</span><span class="v dim">2026-03-14</span></div>
+        <div class="kv"><span class="k">fingerprint</span><span class="v dim">sha256:a4f…</span></div>
+      </div>
+      <div class="zone">
+        <div class="zone-label">
+          <strong>Experience marks</strong>
+          <span class="tag">grows forever</span>
+        </div>
+        <div class="kv"><span class="k">used with</span><span class="v dim">{ 12 other patterns }</span></div>
+        <div class="kv"><span class="k">frequency</span><span class="v dim">47 sessions</span></div>
+        <div class="kv"><span class="k">your style</span><span class="v dim">matches convention #8</span></div>
+        <div class="kv"><span class="k">quality</span><span class="v dim">0.94 · promoted</span></div>
+        <div class="kv"><span class="k">co-occurs</span><span class="v dim">{ auth_guard, user_ctx }</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ SECTION 5: PRODUCTS ═════════════ -->
+<section id="products" class="products">
+  <div class="shell">
+    <div class="intro reveal">
+      <div class="eyebrow">How you use it</div>
+      <h2>Three ways in.</h2>
+      <p class="lede" style="margin-top:1.4rem;">
+        Start free in your browser. Grow into the hosted platform when your team
+        needs it. Self-host the gateway when your whole stack needs to see through
+        one lens.
+      </p>
+    </div>
+
+    <div class="product-stack">
+
+      <!-- MemBrain -->
+      <div class="product reveal">
+        <div>
+          <div class="tag">01 · Free · Individual</div>
+          <div class="name">MemBrain</div>
+          <div class="who">Browser extension for anyone using Claude</div>
+        </div>
+        <div>
+          <p class="body">
+            Install it. Use Claude like you already do. MemBrain quietly captures
+            what you talk about and injects the relevant bits back into every
+            new conversation — so you stop explaining yourself.
+          </p>
+          <ul class="bullets">
+            <li>Zero setup after install</li>
+            <li>Works in Claude.ai on any site that talks to it</li>
+            <li>Your data stays local in the free tier</li>
+          </ul>
+        </div>
+        <div class="meta">
+          <span class="status"><span class="dot"></span>Live · v0.5.3</span>
+          <div class="pricing">Free · Chrome</div>
+        </div>
+      </div>
+
+      <!-- Helix Cortex -->
+      <div class="product featured reveal">
+        <div>
+          <div class="tag">02 · Team · Hosted</div>
+          <div class="name">Helix Cortex</div>
+          <div class="who">For teams, agencies, and serious builders</div>
+        </div>
+        <div>
+          <p class="body">
+            <strong>The core of the system.</strong> A hosted platform where your
+            patterns, decisions, and conventions are stored, searched, and
+            delivered to your AI as it needs them. Multi-tenant. API-first.
+            Everything else plugs into it.
+          </p>
+          <ul class="bullets">
+            <li>Persistent knowledge base and knowledge graph</li>
+            <li>Compression — smaller prompts, same information</li>
+            <li>API, SDK, and the social + content queue</li>
+          </ul>
+        </div>
+        <div class="meta">
+          <span class="status"><span class="dot"></span>Live · v0.9.0</span>
+          <div class="pricing">Paid · Hosted</div>
+        </div>
+      </div>
+
+      <!-- Gateway -->
+      <div class="product reveal">
+        <div>
+          <div class="tag">03 · Enterprise · Self-hosted</div>
+          <div class="name">Helix Gateway</div>
+          <div class="who">For organizations that need to see every AI action</div>
+        </div>
+        <div>
+          <p class="body">
+            The gateway sits upstream of your whole AI tool stack. Every call an
+            AI agent makes — every tool, every service, every request — flows
+            through Helix. You get full visibility, audit, and policy control in
+            one place.
+          </p>
+          <ul class="bullets">
+            <li>Routes all MCP tool calls through one audited surface</li>
+            <li>Self-hosted via Docker, on your infrastructure</li>
+            <li>Enterprise SSO, per-team policy, full audit log</li>
+          </ul>
+        </div>
+        <div class="meta">
+          <span class="status soon"><span class="dot"></span>Specced · Building next</span>
+          <div class="pricing">Self-host</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═════════════ CTA ═════════════ -->
+<section id="cta" class="cta">
+  <div class="shell reveal">
+    <div class="eyebrow">Get involved</div>
+    <h2>Compound your work<br><em>before everyone else does.</em></h2>
+    <p class="lede" style="margin-left:auto; margin-right:auto; color:var(--ink-2);">
+      Helix is in active development. We're looking for early builders, teams, and
+      researchers who want their AI to remember.
+    </p>
+    <div class="actions">
+      <a href="mailto:hello@millyweb.com" class="btn btn-primary">Request early access <span class="btn-arrow">→</span></a>
+      <a href="#idea" class="btn btn-ghost">Read the thesis</a>
+    </div>
+    <div class="footer-note">Three paths · free extension · hosted platform · self-hosted Docker</div>
+  </div>
+</section>
+
+<footer>
+  <div class="shell">
+    <span class="brand">HELIX · MW Development</span>
+    <span>millyweb.com · 2026 · <a href="https://build.helixcode.app">Architecture detail →</a></span>
+  </div>
+</footer>
+
+<!-- ═════════════ DNA CANVAS ═════════════ -->
+<script>
+(function(){
+  const canvas = document.getElementById('helix-canvas');
+  if(!canvas) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  // Read accent color from CSS custom property
+  const css = getComputedStyle(document.documentElement);
+  const accent = (css.getPropertyValue('--accent') || '#6BB6E8').trim();
+  const accentHi = (css.getPropertyValue('--accent-hi') || '#9BD1F5').trim();
+
+  let W = 0, H = 0;
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    W = rect.width; H = rect.height;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  const TAU = Math.PI * 2;
+  let t = 0;
+
+  // Two helical strands + rungs, rotating in 3D on the X axis
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+
+    const cx = W * 0.5;
+    const cy = H * 0.5;
+
+    // helix parameters
+    const amp = Math.min(W, 800) * 0.14;     // width of the helix
+    const verticalRange = H * 1.2;           // how tall it is
+    const steps = 72;
+    const rot = t * 0.0004;                  // rotation speed
+    const depthTilt = Math.sin(t * 0.0002) * 0.25 + 0.9;  // gentle 3D tilt
+
+    const strandA = [];
+    const strandB = [];
+
+    for(let i = 0; i < steps; i++){
+      const u = (i / (steps - 1));            // 0..1
+      const y = cy - verticalRange / 2 + u * verticalRange;
+      const phase = u * TAU * 3 + rot;        // 3 full turns visible
+
+      const xA = cx + Math.cos(phase) * amp;
+      const xB = cx + Math.cos(phase + Math.PI) * amp;
+
+      const depthA = (Math.sin(phase) + 1) / 2;   // 0..1, z for A
+      const depthB = (Math.sin(phase + Math.PI) + 1) / 2; // 0..1, z for B
+
+      strandA.push({ x: xA, y, d: depthA });
+      strandB.push({ x: xB, y, d: depthB });
+    }
+
+    // draw rungs first (so strands sit on top)
+    ctx.lineCap = 'round';
+    for(let i = 0; i < steps; i += 2){
+      const a = strandA[i], b = strandB[i];
+      const avgDepth = (a.d + b.d) / 2;
+      const alpha = 0.05 + avgDepth * 0.22;
+      ctx.strokeStyle = rgba(accent, alpha);
+      ctx.lineWidth = 0.8 + avgDepth * 0.6;
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.stroke();
+    }
+
+    // draw strand A
+    drawStrand(strandA, accentHi);
+    // draw strand B (slightly dimmer)
+    drawStrand(strandB, accent, 0.75);
+
+    // draw highlighted nodes every few steps
+    for(let i = 0; i < steps; i += 3){
+      for(const s of [strandA, strandB]){
+        const p = s[i];
+        const r = 0.6 + p.d * 2.2;
+        const alpha = 0.15 + p.d * 0.7;
+        ctx.beginPath();
+        ctx.fillStyle = rgba(accentHi, alpha);
+        ctx.arc(p.x, p.y, r, 0, TAU);
+        ctx.fill();
+      }
+    }
+  }
+
+  function drawStrand(points, color, dim=1){
+    // build a smooth curve through the points with depth-varying width
+    for(let i = 0; i < points.length - 1; i++){
+      const p0 = points[i], p1 = points[i+1];
+      const d = (p0.d + p1.d) / 2;
+      const alpha = (0.12 + d * 0.6) * dim;
+      const width = (0.6 + d * 2.1) * dim;
+      ctx.strokeStyle = rgba(color, alpha);
+      ctx.lineWidth = width;
+      ctx.beginPath();
+      ctx.moveTo(p0.x, p0.y);
+      ctx.lineTo(p1.x, p1.y);
+      ctx.stroke();
+    }
+  }
+
+  // convert a CSS color string (oklch, hex, rgb) to rgba(..,alpha)
+  // use a hidden span to resolve any color
+  const _resolver = document.createElement('span');
+  _resolver.style.display = 'none';
+  document.body.appendChild(_resolver);
+  const _cache = {};
+  function rgba(color, a){
+    const key = color + '|' + a;
+    if(_cache[key]) return _cache[key];
+    _resolver.style.color = color;
+    const resolved = getComputedStyle(_resolver).color; // "rgb(r, g, b)" or "rgba(r, g, b, a)"
+    const m = resolved.match(/rgba?\(([^)]+)\)/);
+    let out = resolved;
+    if(m){
+      const parts = m[1].split(',').map(s => s.trim());
+      out = `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${a})`;
+    }
+    _cache[key] = out;
+    return out;
+  }
+
+  function loop(){
+    t += 16;
+    draw();
+    if(!reduceMotion) requestAnimationFrame(loop);
+  }
+
+  // first paint, then animate
+  draw();
+  if(!reduceMotion) requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helix — The Complete Enrichment Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0d12;--bg2:#10131a;--bg3:#161922;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#e2e8f4;--muted:#6b7a99;--cyan:#00d4ff;--violet:#7b5fff;--green:#00e87a;--amber:#f5a623;--pink:#ff5c8a;--indigo:#5b8af5;--teal:#00c9b1;--proposed:#3a4055;--proposed-text:#7a8aaa}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 2.5rem;height:56px;background:rgba(11,13,18,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border2)}
+.nav-logo{font-family:'DM Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--cyan);letter-spacing:0.12em;text-decoration:none}
+.nav-links{display:flex}
+.nav-link{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);text-decoration:none;padding:0 1.1rem;height:56px;display:flex;align-items:center;text-transform:uppercase;letter-spacing:0.1em;border-right:1px solid var(--border);transition:color 0.15s,background 0.15s}
+.nav-link:first-child{border-left:1px solid var(--border)}.nav-link:hover{color:var(--text);background:rgba(255,255,255,0.03)}.nav-link.active{color:var(--cyan)}
+.nav-right{display:flex;align-items:center;gap:0.75rem}
+.nav-back{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);border:1px solid var(--border2);padding:0.3rem 0.9rem;text-decoration:none;transition:all 0.15s}.nav-back:hover{color:var(--text)}
+.nav-cta{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--cyan);border:1px solid var(--cyan);padding:0.3rem 0.9rem;text-decoration:none;transition:all 0.15s}.nav-cta:hover{background:var(--cyan);color:var(--bg)}
+main{padding-top:56px;max-width:1300px;margin:0 auto;padding-left:3rem;padding-right:3rem}
+.hero{padding:5rem 0 4rem;border-bottom:1px solid var(--border)}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--green);border:1px solid rgba(0,232,122,0.3);padding:0.3rem 0.85rem;margin-bottom:2rem;background:rgba(0,232,122,0.05)}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(4rem,8vw,7rem);line-height:0.92;letter-spacing:0.02em;color:var(--text);margin-bottom:1.5rem}
+.hero h1 .hl{color:var(--cyan)}
+.hero-sub{font-size:1.05rem;color:var(--muted);max-width:700px;line-height:1.75;margin-bottom:2.5rem}
+.hero-sub strong{color:var(--text);font-weight:500}
+.legend{display:flex;align-items:center;gap:1.75rem;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:0.5rem;font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted)}
+.legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.section-label{font-family:'DM Mono',monospace;font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.18em;margin:4rem 0 2rem;display:flex;align-items:center;gap:1rem}
+.section-label::before{content:'§';color:var(--cyan);font-size:0.85rem}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,var(--border2),transparent)}
+.flow-block{border:1px solid var(--border2);background:var(--bg2);position:relative;margin-bottom:0}
+.flow-block::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px}
+.flow-block.color-cyan::before{background:var(--cyan)}.flow-block.color-violet::before{background:var(--violet)}.flow-block.color-green::before{background:var(--green)}.flow-block.color-amber::before{background:var(--amber)}.flow-block.color-pink::before{background:var(--pink)}.flow-block.color-indigo::before{background:var(--indigo)}.flow-block.color-teal::before{background:var(--teal)}
+.flow-block-header{display:flex;align-items:center;gap:1.25rem;padding:1.25rem 1.5rem 1.25rem 1.75rem;cursor:pointer;user-select:none;transition:background 0.15s}
+.flow-block-header:hover{background:rgba(255,255,255,0.025)}
+.flow-block.open .flow-block-header{border-bottom:1px solid var(--border)}
+.flow-title-wrap{flex:1}
+.flow-title{font-family:'DM Mono',monospace;font-size:0.9rem;font-weight:500;color:var(--text);margin-bottom:0.2rem}
+.flow-subtitle{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted)}
+.flow-toggle{font-family:'DM Mono',monospace;font-size:0.8rem;color:var(--muted);width:20px;text-align:center;transition:transform 0.2s;flex-shrink:0}
+.flow-block.open .flow-toggle{transform:rotate(180deg)}
+.flow-features{display:none;padding:1.5rem 1.75rem 1.75rem}
+.flow-block.open .flow-features{display:block}
+.feature-list{display:grid;gap:0}
+.feature-item{display:flex;align-items:flex-start;gap:1rem;font-size:0.85rem;color:var(--muted);line-height:1.55;padding:0.75rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+.feature-item:last-child{border-bottom:none}
+.feature-text{flex:1}
+.feature-text code{font-family:'DM Mono',monospace;font-size:0.78rem;color:var(--cyan);background:rgba(0,212,255,0.08);padding:0.1rem 0.4rem;border-radius:2px}
+.badge{font-family:'DM Mono',monospace;font-size:0.58rem;padding:0.15rem 0.5rem;border-radius:2px;white-space:nowrap;flex-shrink:0;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;margin-top:0.15rem}
+.badge-live-core{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.25)}
+.badge-live-kb{background:rgba(123,95,255,0.1);color:var(--violet);border:1px solid rgba(123,95,255,0.3)}
+.badge-live-scanner{background:rgba(0,201,177,0.1);color:var(--teal);border:1px solid rgba(0,201,177,0.3)}
+.badge-live-symbol{background:rgba(245,166,35,0.1);color:var(--amber);border:1px solid rgba(245,166,35,0.3)}
+.badge-proposed{background:var(--proposed);color:var(--proposed-text);border:1px solid rgba(255,255,255,0.08)}
+.badge-p0{background:rgba(0,212,255,0.07);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.badge-p1{background:rgba(0,232,122,0.07);color:var(--green);border:1px solid rgba(0,232,122,0.2)}
+.badge-p2{background:rgba(245,166,35,0.07);color:var(--amber);border:1px solid rgba(245,166,35,0.2)}
+.badge-p3{background:rgba(255,255,255,0.04);color:var(--muted);border:1px solid rgba(255,255,255,0.1)}
+.callout{background:rgba(0,232,122,0.05);border:1px solid rgba(0,232,122,0.2);border-left:3px solid var(--green);padding:1rem 1.25rem;font-size:0.85rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6}
+.callout strong{color:var(--text)}
+.flow-connector{display:flex;flex-direction:column;align-items:center;position:relative}
+.fc-pipe{width:2px;position:relative}
+.fc-pipe.tall{height:64px}.fc-pipe.short{height:32px}
+.fc-pipe.cyan{background:linear-gradient(to bottom,rgba(0,212,255,0.6),rgba(0,212,255,0.3))}
+.fc-pipe.multi{background:linear-gradient(to bottom,rgba(0,212,255,0.6),rgba(123,95,255,0.6))}
+.fc-pipe.green{background:linear-gradient(to bottom,rgba(0,232,122,0.6),rgba(0,232,122,0.3))}
+.fc-pipe::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;animation:travel 2s ease-in-out infinite;top:0}
+.fc-pipe.cyan::after{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.fc-pipe.multi::after{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.fc-pipe.green::after{background:var(--green);box-shadow:0 0 8px var(--green)}
+@keyframes travel{0%{top:0;opacity:0}20%{opacity:1}80%{opacity:1}100%{top:100%;opacity:0}}
+.fc-label{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);padding:0.35rem 1.25rem;border:1px solid var(--border2);background:var(--bg3);letter-spacing:0.08em;text-align:center;flex-shrink:0}
+.fan-wrap{display:flex;flex-direction:column;align-items:center;padding:2rem 0}
+.fan-top-line{width:2px;height:40px;background:linear-gradient(to bottom,rgba(0,212,255,0.5),rgba(0,212,255,0.9));position:relative}
+.fan-top-line::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:travel 2s ease-in-out infinite}
+.fan-node{width:14px;height:14px;border-radius:50%;border:2px solid var(--cyan);background:var(--bg);box-shadow:0 0 14px rgba(0,212,255,0.5);margin:0 auto}
+.fan-label{font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted);padding:0.35rem 1.25rem;border:1px solid var(--border2);background:var(--bg3);text-align:center;letter-spacing:0.08em;margin-top:0}
+.pipeline-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.pipeline-col{display:flex;flex-direction:column;gap:0.75rem}
+.pipeline-band{font-family:'DM Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:0.12em;padding:0.75rem 1.1rem;border:1px solid var(--border2);background:var(--bg3);display:flex;align-items:center;gap:0.75rem;margin-bottom:0.25rem}
+.pipeline-band.band-a{border-left:4px solid var(--cyan);color:var(--cyan)}
+.pipeline-band.band-b{border-left:4px solid var(--green);color:var(--green)}
+.band-sub{color:var(--muted);font-weight:400;font-size:0.63rem}
+.capture-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem}
+.storage-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem}
+.storage-card{background:var(--bg2);border:1px solid var(--border2);padding:1.5rem}
+.storage-card-label{font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em;margin-bottom:0.4rem}
+.storage-card-name{font-family:'DM Mono',monospace;font-size:0.88rem;color:var(--text);font-weight:500;margin-bottom:0.85rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.storage-item{font-size:0.78rem;color:var(--muted);display:flex;align-items:flex-start;gap:0.5rem;padding:0.2rem 0}
+.storage-item::before{content:'›';color:var(--cyan);opacity:0.5;flex-shrink:0}
+.build-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.flywheel{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--border2);margin:2.5rem 0 0;background:var(--bg2)}
+.fw-step{padding:1.75rem 1.5rem;border-right:1px solid var(--border);text-align:center}
+.fw-step:last-child{border-right:none}
+.fw-icon{font-size:1.75rem;margin-bottom:0.75rem}
+.fw-arrow{font-family:'DM Mono',monospace;font-size:1rem;color:var(--cyan);margin-top:0.5rem}
+.fw-step h4{font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:0.35rem}
+.fw-step p{font-size:0.78rem;color:var(--muted);line-height:1.5}
+.page-footer{border-top:1px solid var(--border);padding:2.5rem 0;margin-top:5rem;display:flex;justify-content:space-between;align-items:center}
+.footer-logo{font-family:'DM Mono',monospace;font-size:1rem;color:var(--cyan)}
+.footer-copy{font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted)}
+.mt-sm{margin-top:0.75rem}
+.capture-band{background:var(--bg3);border:1px solid var(--border2);border-left:4px solid var(--pink);padding:1rem 1.5rem;font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+@media(max-width:1000px){main{padding-left:1.5rem;padding-right:1.5rem}.pipeline-grid,.capture-grid,.storage-grid,.build-grid,.flywheel{grid-template-columns:1fr}.nav-links{display:none}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="#">HELIX</a>
+  <div class="nav-links">
+    <a class="nav-link active" href="#intake">Intake</a>
+    <a class="nav-link" href="#pipelines">Pipelines</a>
+    <a class="nav-link" href="#capture">Capture</a>
+    <a class="nav-link" href="#scaffold">Scaffolding</a>
+    <a class="nav-link" href="#storage">Storage</a>
+    <a class="nav-link" href="#build">Build Phases</a><a class="nav-link" href="#product">Product Layers</a>
+  </div>
+  <div class="nav-right">
+    <a class="nav-back" href="https://helix-site.millyweb.com">← Marketing Site</a>
+    <a class="nav-cta" href="mailto:hello@millyweb.com">Early Access</a>
+  </div>
+</nav>
+<main>
+<div class="hero">
+  <div class="hero-badge">// full feature list — live + proposed — v1.0 build</div>
+  <h1>THE COMPLETE<br><span class="hl">ENRICHMENT FLOW</span></h1>
+  <p class="hero-sub">Every action, every channel, every capture surface — <strong>live and proposed together</strong>. One entry point. Two parallel pipelines. Nothing invisible.</p>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div>Live — Core</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--violet)"></div>Live — KB+KG</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Live — Scanner</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>Live — Symbols</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Live — Scaffold</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--pink)"></div>Capture Surface</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--proposed)"></div>Proposed</div>
+  </div>
+</div>
+<div class="section-label" id="intake">01 — intake — single entry point</div>
+<div class="flow-block color-cyan wide open">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">helix_action — Unified Action Tool</div><div class="flow-subtitle">helix-cortex / routers / action.py — the only tool the model needs to call</div></div>
+    <span class="badge badge-proposed">building — phase 1a</span><span class="flow-toggle">▾</span>
+  </div>
+  <div class="flow-features">
+    <div class="callout"><strong>The model calls one thing. Helix decides what to do with it.</strong> No cognitive load about pipelines, scanning, or which tool to use. All intelligence lives inside Helix — not in the model's head.</div>
+    <div class="feature-list">
+      <div class="feature-item"><span class="feature-text"><code>file_write</code> — Full pipeline: version → scan → KB → KG → observer → scaffold returned.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text"><code>file_patch</code> — Targeted str_replace. JSON payload — no shell escaping issues.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text"><code>file_move</code> — Moves on disk + updates KG path labels. Content hash is identity, path is a label.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text"><code>file_delete</code> — Deletes + logs to observer. Deletions are never invisible.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text"><code>file_read</code> — Returns content with metadata. Read-only — no pipeline fires.</span><span class="badge badge-live-core">live</span></div>
+      <div class="feature-item"><span class="feature-text"><code>file_list</code> — Directory listing. Read-only — no pipeline fires.</span><span class="badge badge-live-core">live</span></div>
+      <div class="feature-item"><span class="feature-text"><code>command</code> — Executes on server. Auto-detects output: stack traces, service names, package installs → KG. Always → observer.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text"><code>scaffold_query</code> — Explicit scaffold request. Returns imports[], boilerplate, related_files[], confidence.</span><span class="badge badge-proposed">building</span></div>
+    </div>
+  </div>
+</div>
+<div class="flow-connector">
+  <div class="fc-pipe tall cyan"></div>
+  <div class="fc-label">every action passes through the smart content detector</div>
+  <div class="fc-pipe short cyan"></div>
+</div>
+<div class="flow-block color-indigo wide open">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">Smart Content Detector</div><div class="flow-subtitle">helix-cortex / services / detector.py — shared by both pipelines and all 13 capture surfaces</div></div>
+    <span class="badge badge-proposed">building — phase 1b</span><span class="flow-toggle">▾</span>
+  </div>
+  <div class="flow-features">
+    <div class="feature-list">
+      <div class="feature-item"><span class="feature-text">Classifies any content: <strong>code | config | prose | structured-data | binary</strong>. Selects pipeline automatically.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text">Used by every input surface: helix_action, file scanner, SSH capture, conversation chunks, git diffs, log lines.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text">Config: YAML/TOML/INI → infra atoms. Docker Compose → container + port + network entities in KG.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text">Stack traces: Python/Node/Go format detection → file, function, error type → failure record.</span><span class="badge badge-proposed">building</span></div>
+    </div>
+  </div>
+</div>
+<div class="fan-wrap">
+  <div class="fan-top-line"></div>
+  <div class="fan-node"></div>
+  <div class="fan-label">fans into two parallel pipelines simultaneously — both fire on every action</div>
+</div>
+<div class="section-label" id="pipelines">02 — parallel pipelines — fire simultaneously on every action</div>
+<div class="pipeline-grid">
+  <div class="pipeline-col">
+    <div class="pipeline-band band-a">Pipeline A — Intelligence <span class="band-sub">· async · fire-and-forget · never blocks response</span></div>
+    <div class="flow-block color-cyan open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Atom Scanner</div><div class="flow-subtitle">SCANNER / ATOMS — tier 1 · 2 · 3</div></div><span class="badge badge-live-scanner">live</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Tier 1: Tree-sitter — 100+ languages, ~$0.00/file.</span><span class="badge badge-live-scanner">live</span></div><div class="feature-item"><span class="feature-text">Tier 2: Haiku LLM — purpose, type, quality, reuse potential. ~$0.001/file.</span><span class="badge badge-live-scanner">live</span></div><div class="feature-item"><span class="feature-text">Tier 3: Self-generated heuristics. After N analyses, generates own rules. $0.00 forever.</span><span class="badge badge-live-scanner">live</span></div><div class="feature-item"><span class="feature-text">Structural fingerprint per atom. Matching fingerprints auto-register as templates.</span><span class="badge badge-live-scanner">live</span></div><div class="feature-item"><span class="feature-text">Config parser plugin: Docker Compose → KG entities.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Import resolution (P3): scan imports → package public API as atoms.</span><span class="badge badge-p3">p3</span></div></div></div></div>
+    <div class="flow-block color-violet open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Knowledge Base + Knowledge Graph</div><div class="flow-subtitle">CORTEX / KB + KG — postgres (pgvector) + neo4j</div></div><span class="badge badge-live-kb">live</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">KB: FTS5 + pgvector semantic search. 158+ docs indexed.</span><span class="badge badge-live-kb">live</span></div><div class="feature-item"><span class="feature-text">Entity upsert: container, service, port, domain, project, tool, person, dependency. 463 entities.</span><span class="badge badge-live-kb">live</span></div><div class="feature-item"><span class="feature-text">Relationships: DEPENDS_ON, CONTAINS, TOUCHES, PRODUCES.</span><span class="badge badge-live-kb">live</span></div><div class="feature-item"><span class="feature-text">Exchange extraction: decisions/failures/patterns auto-extracted async.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Operational patterns: restart sequences, port conflicts — learned from SSH stream.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+    <div class="flow-block color-amber open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Symbol Engine</div><div class="flow-subtitle">COMPRESSION — § promotion · token savings</div></div><span class="badge badge-live-symbol">live</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">High-frequency phrase tracking. Daily promotion. 400+ active symbols.</span><span class="badge badge-live-symbol">live</span></div><div class="feature-item"><span class="feature-text">§ prefix namespace. LLM receives full phrase — context carries compressed form.</span><span class="badge badge-live-symbol">live</span></div></div></div></div>
+    <div class="flow-block color-teal open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Observer</div><div class="flow-subtitle">LOGGING — every action · archive collections</div></div><span class="badge badge-live-core">live</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Logs every tool call: type, params, result, timing, session_id.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text">Archive collections: decisions, failures, patterns, sessions, project_archive, snapshots.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text">Auto conversation extraction (P1): async worker — helix_exchange_post becomes optional.</span><span class="badge badge-p1">p1</span></div></div></div></div>
+  </div>
+  <div class="pipeline-col">
+    <div class="pipeline-band band-b">Pipeline B — Scaffolding <span class="band-sub">· fast · returns with action result · &lt;200ms</span></div>
+    <div class="flow-block color-green open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Intent Parser</div><div class="flow-subtitle">helix-cortex / services / intent_parser.py</div></div><span class="badge badge-proposed">building — phase 1d</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text"><strong>Signal 1 — Message intent:</strong> tokens matched against atom vocabulary from your codebase.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text"><strong>Signal 2 — Current context:</strong> file/directory/project from recent helix_action calls.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text"><strong>Signal 3 — Recency window:</strong> just wrote a model → bias scaffold toward router or test.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Vocabulary grows automatically. Skip logic: no tokens, read-only, low confidence → skip.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+    <div class="flow-block color-green open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Atom Matcher</div><div class="flow-subtitle">pgvector similarity search — 990 atoms live</div></div><span class="badge badge-proposed">building — phase 1d</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Structural similarity search on pgvector embeddings. Returns top-N atoms by type.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Context bias: same project/directory atoms weighted higher.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Confidence 0.0–1.0. 990 atoms live today, growing every session.</span><span class="badge badge-live-scanner">990 live</span></div></div></div></div>
+    <div class="flow-block color-green open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Dependency Cascader</div><div class="flow-subtitle">KG traversal — related files + cascade suggestions</div></div><span class="badge badge-proposed">building — phase 1d</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">KG traversal: what files relate to this path? What imports this? What depends on this config?</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Cascade: new router → register in main.py + test file. New service → compose + Traefik + health check.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+    <div class="flow-block color-green open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Scaffold Assembler</div><div class="flow-subtitle">boilerplate + imports + type signatures + test stubs</div></div><span class="badge badge-proposed">building — phase 1d</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Combines matched atoms into scaffold. Returns <code>imports[]</code>, <code>boilerplate</code>, <code>related_files[]</code>, <code>confidence</code>.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Test stub generation: implementation written → test file scaffold returned automatically.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Flywheel: Claude completes scaffold → Pipeline A learns → next scaffold improves.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  </div>
+</div>
+<div class="flow-connector" style="margin-top:2rem">
+  <div class="fc-pipe tall multi"></div>
+  <div class="fc-label">pipeline A stores atoms · pipeline B scaffold + context → MemBrain injection</div>
+  <div class="fc-pipe short multi"></div>
+</div>
+<div class="section-label" id="capture">03 — capture surfaces — all inputs to pipeline A</div>
+<div class="capture-band"><span style="color:var(--pink)">13 CAPTURE SURFACES</span><span>·</span><span>everything flows through the enrichment engine</span><span>·</span><span>nothing is invisible</span><span>·</span><span>you never configure what gets scanned</span></div>
+<div class="capture-grid">
+  <div class="flow-block color-pink open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">File Operations</div><div class="flow-subtitle">helix_action file_write / patch / move / delete</div></div><span class="badge badge-p0">P0</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">file_write: full pipeline. Blob stored in Garage.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text">file_patch: targeted str_replace. No sed mangles.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text">file_move: disk move + KG path label update by content hash.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text">file_delete: delete + observer log.</span><span class="badge badge-live-core">live</span></div></div></div></div>
+  <div class="flow-block color-pink open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">SSH Command Capture</div><div class="flow-subtitle">POST /capture/ssh — auto from gateway</div></div><span class="badge badge-p0">P0</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Every gateway__ssh_execute auto-posts. One webhook = 100% SSH coverage.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Parsed: file paths → scan. Stack traces → failure records. Service names → KG entities.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">pip/npm → dependency entities. Port/hostname → network topology. Always → observer.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Existing Files on Disk</div><div class="flow-subtitle">background file scanner — scheduled worker</div></div><span class="badge badge-p0">P0</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Worker walks configured directories on schedule. Hash-indexed — only rescans changed files.</span><span class="badge badge-proposed">building</span></div><div class="feature-item"><span class="feature-text">Skips: node_modules, .git, __pycache__, binaries, &gt;1MB. Config via .helix/config.yml.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Git Events</div><div class="flow-subtitle">POST /capture/git — post-commit hook</div></div><span class="badge badge-p1">P1</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">helix init installs post-commit hook. Diff + commit message → decision record.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Stack Traces</div><div class="flow-subtitle">auto via SSH capture stderr</div></div><span class="badge badge-p1">P1</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Python/Node/Go format detection. Extracts file, function, line, error type → failure record + KG.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Conversation Extraction</div><div class="flow-subtitle">async worker — automatic post-session</div></div><span class="badge badge-p1">P1</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Async worker extracts decisions, failures, patterns. helix_exchange_post becomes optional.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Desktop Sidecar &mdash; Claude Desktop Capture</div><div class="flow-subtitle">C:/tools/helix-sidecar/ &middot; log_turn + flush_session &middot; MCP stdio &middot; installed</div></div><span class="badge badge-live-core">installed</span><span class="flow-toggle">&or;</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Installed at <code>C:/tools/helix-sidecar/server.py</code>. Registered as <code>helix-sidecar</code> MCP server in Desktop config.json alongside helix-node and ssh-vps2.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text"><code>log_turn()</code> &mdash; Claude calls after every response to capture conversation turns into Helix Pipeline A.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text"><code>flush_session()</code> &mdash; batch-writes buffered turns at natural breakpoints.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text"><code>backfill.py</code> &mdash; one-time backfill of existing Desktop conversation history.</span><span class="badge badge-live-core">live</span></div><div class="feature-item"><span class="feature-text">Requires system prompt: &ldquo;After every response call log_turn(). Call flush_session() at breakpoints.&rdquo; Relies on Claude cooperation &mdash; interim until HTTPS proxy (Layer 3) ships.</span><span class="badge badge-proposed">needs system prompt</span></div><div class="feature-item"><span class="feature-text">Desktop needs restart to activate. Node agent (helix-node) also installed: file_write/read/patch/list/move/delete/command on local machine.</span><span class="badge badge-proposed">needs restart</span></div></div></div></div>
+  <div class="flow-block color-pink"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Package Dependencies</div><div class="flow-subtitle">SSH capture + watcher</div></div><span class="badge badge-p2">P2</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">SSH capture catches pip/npm install. Periodic scan of requirements.txt, package.json, go.mod.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Config Files</div><div class="flow-subtitle">infra atom parser — YAML / TOML / INI</div></div><span class="badge badge-p2">P2</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Docker Compose → container/port/network entities in KG. Infrastructure topology atoms.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Runtime Logs</div><div class="flow-subtitle">log tailer — signal only</div></div><span class="badge badge-p2">P2</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Tails configured containers. Signal-only: errors + warnings → log_event KB entries.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">File Moves / Renames</div><div class="flow-subtitle">POST /capture/move</div></div><span class="badge badge-p2">P2</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Updates path labels on atoms by content hash. No migration — label update only.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Import Resolution</div><div class="flow-subtitle">post-scan dependency resolver</div></div><span class="badge badge-p3">P3</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Resolve imports → index package public API as external atoms.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Browser / MemBrain Hook</div><div class="flow-subtitle">POST /capture/browser — opt-in</div></div><span class="badge badge-p3">P3</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Visiting GitHub/docs.*/npm → optionally POST page content. Opt-in per domain.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+  <div class="flow-block color-pink"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">DB Schema / Migrations</div><div class="flow-subtitle">POST /capture/migration</div></div><span class="badge badge-p3">P3</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">sql_diff + name → schema entities in KG. Migration name → decision record.</span><span class="badge badge-proposed">building</span></div></div></div></div>
+</div>
+<div class="flow-connector" style="margin-top:2rem">
+  <div class="fc-pipe tall multi"></div>
+  <div class="fc-label">pipeline B scaffold + context → MemBrain pre-generation injection</div>
+  <div class="fc-pipe short multi"></div>
+</div>
+<div class="section-label" id="scaffold">04 — pre-generation scaffold injection — before the llm generates</div>
+<div class="flow-block color-green wide open">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">MemBrain — Pre-Generation Injection</div><div class="flow-subtitle">extension content script — intercepts outgoing messages before Claude</div></div>
+    <span class="badge badge-proposed">building — phase 6</span><span class="flow-toggle">▾</span>
+  </div>
+  <div class="flow-features">
+    <div class="callout"><strong>The LLM never sees a blank page.</strong> MemBrain intercepts the outgoing message, queries the enrichment engine, injects scaffold context before the message reaches Claude. User workflow unchanged.</div>
+    <div class="feature-list">
+      <div class="feature-item"><span class="feature-text">Signal 1 — Message intent: tokens matched against atom vocabulary from your codebase.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text">Signal 2 — Context: file/directory/project from recent helix_action calls.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text">Signal 3 — Recency window: just wrote a model → scaffold biases toward router or test.</span><span class="badge badge-proposed">building</span></div>
+      <div class="feature-item"><span class="feature-text">Injected as <code>&lt;helix_scaffold&gt;</code>: imports[], boilerplate, related_files[], confidence. Round trip &lt;200ms.</span><span class="badge badge-proposed">building</span></div>
+    </div>
+  </div>
+</div>
+<div class="flow-connector">
+  <div class="fc-pipe tall green"></div>
+  <div class="fc-label">llm completes scaffold · output → helix_action → pipeline A · cycle improves</div>
+  <div class="fc-pipe short green"></div>
+</div>
+<div class="flow-block color-cyan wide open">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">LLM Output → Compression Loop</div><div class="flow-subtitle">CONTENT OUTPUT — response loop · symbol injection</div></div>
+    <span class="badge badge-live-core">live</span><span class="flow-toggle">▾</span>
+  </div>
+  <div class="flow-features"><div class="feature-list">
+    <div class="feature-item"><span class="feature-text">LLM completes scaffold. Output → helix_action → Pipeline A compresses → atom store improves.</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">§ symbols replace high-frequency phrases. Token savings compound every session.</span><span class="badge badge-live-symbol">live</span></div>
+    <div class="feature-item"><span class="feature-text">Every generation makes the next generation cheaper. Scaffolds improve. LLM writes less from scratch.</span><span class="badge badge-proposed">improving</span></div>
+  </div></div>
+</div>
+<div class="flywheel">
+  <div class="fw-step"><div class="fw-icon">📥</div><h4>Action Arrives</h4><p>helix_action receives any operation</p><div class="fw-arrow">→</div></div>
+  <div class="fw-step"><div class="fw-icon">🗜️</div><h4>Pipeline A Compresses</h4><p>Raw code → atoms → KG → KB → embeddings</p><div class="fw-arrow">→</div></div>
+  <div class="fw-step"><div class="fw-icon">🔍</div><h4>Pipeline B Decompresses</h4><p>Intent → embeddings → scaffold in &lt;200ms</p><div class="fw-arrow">→</div></div>
+  <div class="fw-step"><div class="fw-icon">✍️</div><h4>LLM Completes</h4><p>Fills what's novel. Output feeds Pipeline A. Cycle improves.</p></div>
+</div>
+
+<div class="section-label" id="output">04b &mdash; output layer &mdash; synapse &middot; cockpit &middot; runbook &mdash; live</div>
+<div class="callout" style="border-left-color:var(--green)"><strong>Entire output layer is live</strong> &mdash; these were missing from this site. Synapse (9,077 chunks searchable), Cockpit (692 anomalies, 340 nudges, 12 project states), Runbook (8 pages, dynamic injection), Exchange System (420 entries, auto-compiled) are all running in production.</div>
+<div class="flow-block color-violet wide open">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">Synapse &mdash; Context Assembler + Conversation RAG</div><div class="flow-subtitle">services/synapse.py &middot; 9,077 chunks &middot; FTS5 + pgvector hybrid</div></div>
+    <span class="badge badge-live-core">live</span><span class="flow-toggle">&or;</span>
+  </div>
+  <div class="flow-features"><div class="feature-list">
+    <div class="feature-item"><span class="feature-text">assemble_context() calls conversation_store.hybrid_search() &mdash; real chunks returned.</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">/context/inject endpoint &mdash; tiered injection: Tier 1 (400 tokens, every message), Tier 2 (800 tokens, session start), Tier 3 (on-demand search).</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">ext_ingest auto-summarization: every MemBrain flush &rarr; Haiku background job &rarr; decisions &rarr; structured_archive.</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">9,077 conversation chunks / 601 sessions indexed. 6,928 structured archive entries.</span><span class="badge badge-live-core">live</span></div>
+  </div></div>
+</div>
+<div class="flow-block color-teal wide open" style="margin-top:0.25rem">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">Cockpit &mdash; Intelligence Dashboard</div><div class="flow-subtitle">692 anomalies &middot; 340 nudges &middot; 12 project states &middot; API live</div></div>
+    <span class="badge badge-live-core">live</span><span class="flow-toggle">&or;</span>
+  </div>
+  <div class="flow-features"><div class="feature-list">
+    <div class="feature-item"><span class="feature-text">692 anomalies (detected contradictions/regressions with lifecycle state).</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">340 nudges (actionable suggestions with lifecycle state).</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">12 project_state rows &mdash; one-line status per active project. Replaces master context blob.</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">/cockpit/overview, /cockpit/anomalies, /cockpit/nudges, /cockpit/sessions APIs live. Dashboard UI specced.</span><span class="badge badge-live-core">live</span></div>
+  </div></div>
+</div>
+<div class="flow-block color-amber wide open" style="margin-top:0.25rem">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">Runbook &mdash; Dynamic Context Injection</div><div class="flow-subtitle">8 pages live &middot; trigger list &middot; Tier 1 always-on (400 tokens)</div></div>
+    <span class="badge badge-live-core">live</span><span class="flow-toggle">&or;</span>
+  </div>
+  <div class="flow-features"><div class="feature-list">
+    <div class="feature-item"><span class="feature-text">Replaces 3,000-token master context blob. 8 pages. Tier 1: runbook + alerts + project_state + dictionary on every call.</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">Trigger list: SSH work &rarr; operating-procedures, writing code &rarr; conventions, gateway changes &rarr; nohup warning, etc.</span><span class="badge badge-live-core">live</span></div>
+  </div></div>
+</div>
+<div class="flow-block color-cyan wide open" style="margin-top:0.25rem">
+  <div class="flow-block-header" onclick="toggle(this)">
+    <div class="flow-title-wrap"><div class="flow-title">Exchange System</div><div class="flow-subtitle">420 exchanges &middot; auto-compiled &middot; helix_exchange_post + helix_exchange_search</div></div>
+    <span class="badge badge-live-core">live</span><span class="flow-toggle">&or;</span>
+  </div>
+  <div class="flow-features"><div class="feature-list">
+    <div class="feature-item"><span class="feature-text">Auto-exchange compilation: observer.js detects 30s gap &rarr; compiles exchange &rarr; auto-POSTs. No manual saves needed.</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">Intelligence write tools: helix_archive_record, helix_entity_upsert, helix_relationship_create &mdash; all live MCP tools.</span><span class="badge badge-live-core">live</span></div>
+    <div class="feature-item"><span class="feature-text">1,036 per-user compression_profiles. 619 decisions. 584 conventions. 692 anomalies. All in Postgres.</span><span class="badge badge-live-core">live</span></div>
+  </div></div>
+</div>
+<div class="section-label" id="storage">05 — storage + self-contained backup — no host cron</div>
+<div class="storage-grid">
+  <div class="storage-card"><div class="storage-card-label">blob store</div><div class="storage-card-name">Garage <span class="badge badge-proposed">building</span></div><div class="storage-item">helix-workspace/ (file version blobs)</div><div class="storage-item">helix-backups/postgres · neo4j · redis</div><div class="storage-item">Apache 2.0 · ~40MB idle · internal only</div><div class="storage-item">STORAGE_MODE: embedded / external / milly</div></div>
+  <div class="storage-card"><div class="storage-card-label">relational + vector</div><div class="storage-card-name">Postgres + pgvector <span class="badge badge-live-core">live</span></div><div class="storage-item">KB documents (FTS5 + semantic)</div><div class="storage-item">Atom pool (990+ atoms)</div><div class="storage-item">Symbol dictionary (400+)</div><div class="storage-item">Backup: pg_dump → Garage every 6hrs</div></div>
+  <div class="storage-card"><div class="storage-card-label">graph database</div><div class="storage-card-name">Neo4j <span class="badge badge-live-core">live</span></div><div class="storage-item">463 entities live</div><div class="storage-item">DEPENDS_ON · CONTAINS · TOUCHES · PRODUCES</div><div class="storage-item">Backup → Garage daily</div></div>
+  <div class="storage-card"><div class="storage-card-label">cache + scheduler</div><div class="storage-card-name">Redis + APScheduler <span class="badge badge-proposed">building</span></div><div class="storage-item">Cache + worker queue</div><div class="storage-item">Postgres: 6hrs · Neo4j+Redis: daily → Garage</div><div class="storage-item">POST /admin/restore · No host cron</div></div>
+</div>
+<div class="section-label" id="build">06 — build phases — in order</div>
+<div class="build-grid">
+  <div class="pipeline-col">
+    <div class="flow-block color-cyan open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Phase 1 — Core Pipeline (~16 hrs)</div><div class="flow-subtitle">enrichment engine · both pipelines · unified file ops</div></div><span class="badge badge-p0">P0</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">1a. helix_action unified tool — all 8 action types</span><span class="badge badge-live-core">✅ live</span></div><div class="feature-item"><span class="feature-text">1b. Smart content detector — code|config|prose|data|binary</span><span class="badge badge-proposed">~2 hrs</span></div><div class="feature-item"><span class="feature-text">1c. Background file scanner — scheduled worker, hash-indexed</span><span class="badge badge-proposed">~4 hrs</span></div><div class="feature-item"><span class="feature-text">1d. Pipeline B — intent parser + atom matcher + cascader + assembler</span><span class="badge badge-proposed">~6 hrs</span></div></div></div></div>
+    <div class="flow-block color-pink open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Phase 2 — Knowledge Capture (~11 hrs)</div><div class="flow-subtitle">git · ssh · auto extraction · stack traces</div></div><span class="badge badge-p1">P1</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">2a. SSH capture endpoint + gateway webhook</span><span class="badge badge-proposed">~3 hrs</span></div><div class="feature-item"><span class="feature-text">2b. Git hook — helix init + post-commit</span><span class="badge badge-proposed">~2 hrs</span></div><div class="feature-item"><span class="feature-text">2c. Auto conversation extraction worker</span><span class="badge badge-proposed">~3 hrs</span></div><div class="feature-item"><span class="feature-text">2d. Stack trace parser</span><span class="badge badge-proposed">~2 hrs</span></div><div class="feature-item"><span class="feature-text">2e. Package dependency watcher</span><span class="badge badge-proposed">~1 hr</span></div></div></div></div>
+    <div class="flow-block color-amber mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Phase 3 — Runtime Intelligence (~6 hrs)</div><div class="flow-subtitle">log tailer · config parser</div></div><span class="badge badge-p2">P2</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">3a. Log tailer — signal-only filtering</span><span class="badge badge-proposed">~3 hrs</span></div><div class="feature-item"><span class="feature-text">3b. Config file infra atom parser — YAML/TOML/INI → KG</span><span class="badge badge-proposed">~3 hrs</span></div></div></div></div>
+  </div>
+  <div class="pipeline-col">
+    <div class="flow-block color-violet open"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Phase 4 — Forge Internalization (~1 day)</div><div class="flow-subtitle">absorb scanner + workspace into helix-cortex</div></div><span class="badge badge-p1">critical</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Move scanner.py, workspace.py into helix-cortex. Remove external HTTP to The Forge.</span><span class="badge badge-proposed">~1 day</span></div><div class="feature-item"><span class="feature-text">Deprecate the-forge container. Wire Garage into blob storage. Remove MinIO from product.</span><span class="badge badge-proposed">~</span></div></div></div></div>
+    <div class="flow-block color-teal open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Phase 5 — Backup Scheduler (~6 hrs)</div><div class="flow-subtitle">APScheduler · Garage · restore endpoint</div></div><span class="badge badge-p1">critical</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">APScheduler in helix-cortex. Postgres 6hrs, Neo4j+Redis daily → Garage.</span><span class="badge badge-proposed">~3 hrs</span></div><div class="feature-item"><span class="feature-text">POST /admin/restore. Retention enforcement. No host cron.</span><span class="badge badge-proposed">~3 hrs</span></div></div></div></div>
+    <div class="flow-block color-green open mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Phase 6 — MemBrain Phase 2 (~half day)</div><div class="flow-subtitle">pre-generation scaffold injection</div></div><span class="badge badge-proposed">phase 6</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Intercept layer + intent parser (JS) + scaffold injection before send. Transparent to user.</span><span class="badge badge-proposed">~4 hrs</span></div></div></div></div>
+    <div class="flow-block color-pink mt-sm"><div class="flow-block-header" onclick="toggle(this)"><div class="flow-title-wrap"><div class="flow-title">Phases 7–9 — P3 + Federation</div><div class="flow-subtitle">import resolution · browser hook · multi-node</div></div><span class="badge badge-p3">post-v1</span><span class="flow-toggle">▾</span></div><div class="flow-features"><div class="feature-list"><div class="feature-item"><span class="feature-text">Import resolution · Browser hook · DB migration hook · Multi-node federation</span><span class="badge badge-p3">post-v1</span></div></div></div></div>
+  </div>
+</div>
+<div class="callout" style="margin-top:2rem;border-left-color:var(--cyan)"><strong>To v1.0:</strong> Phases 1–5 ≈ 3–4 focused sessions. ~45 hours total. All inside helix-cortex. Only new container: helix-garage — already running.</div>
+
+<div class="section-label" id="product">07 — product layers — path to multi-tenant platform</div>
+<div class="customer-tiers-block" style="margin-top:2rem">
+<div class="section-label" style="margin-bottom:1rem">// customer tiers &amp; deployment model</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem">
+  <div style="border:1px solid var(--border2);padding:1.2rem;background:rgba(0,212,255,0.04)">
+    <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:0.1em;margin-bottom:0.5rem">PRODUCT 01</div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--text);margin-bottom:0.3rem">MemBrain</div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">Browser extension</div>
+    <div style="font-size:0.78rem;color:var(--text2)">Acquisition funnel. Captures session context, injects into Claude.</div>
+    <div style="margin-top:0.75rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--green)">&bull; Live v0.5.3</div>
+  </div>
+  <div style="border:1px solid var(--border2);padding:1.2rem;background:rgba(0,212,255,0.04)">
+    <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--cyan);letter-spacing:0.1em;margin-bottom:0.5rem">PRODUCT 02</div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--text);margin-bottom:0.3rem">Helix Cortex</div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">Intelligence platform</div>
+    <div style="font-size:0.78rem;color:var(--text2)">KB, KG, memory, auth, billing, social queue. Multi-tenant. Revenue engine.</div>
+    <div style="margin-top:0.75rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--green)">&bull; Live v0.9.0</div>
+  </div>
+  <div style="border:1px solid rgba(138,95,255,0.4);padding:1.2rem;background:rgba(138,95,255,0.04)">
+    <div style="font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--violet);letter-spacing:0.1em;margin-bottom:0.5rem">PRODUCT 03</div>
+    <div style="font-family:'DM Mono',monospace;font-size:0.85rem;color:var(--text);margin-bottom:0.3rem">Helix Gateway</div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.5rem">MCP proxy layer</div>
+    <div style="font-size:0.78rem;color:var(--text2)">All tool calls route through Helix. Full visibility, audit, intelligence pipeline.</div>
+    <div style="margin-top:0.75rem;font-family:'DM Mono',monospace;font-size:0.62rem;color:var(--violet)">&bull; Specced &mdash; next build</div>
+  </div>
+</div>
+<div style="display:grid;gap:0.5rem">
+  <div style="display:grid;grid-template-columns:150px 1fr 160px;gap:1rem;align-items:center;border:1px solid var(--border);padding:0.85rem 1rem;font-size:0.78rem">
+    <span style="font-family:'DM Mono',monospace;color:var(--text)">Free</span>
+    <span style="color:var(--text2)">RAG + vector, basic memory. Upgrade trigger: context limit.</span>
+    <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted)">MemBrain + Cortex free</span>
+  </div>
+  <div style="display:grid;grid-template-columns:150px 1fr 160px;gap:1rem;align-items:center;border:1px solid var(--border);padding:0.85rem 1rem;font-size:0.78rem">
+    <span style="font-family:'DM Mono',monospace;color:var(--text)">Paid individual</span>
+    <span style="color:var(--text2)">Compression, smarter recall, social queue, MCP, scaffolding.</span>
+    <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted)">Cortex paid + MCP</span>
+  </div>
+  <div style="display:grid;grid-template-columns:150px 1fr 160px;gap:1rem;align-items:center;border:1px solid var(--cyan);padding:0.85rem 1rem;font-size:0.78rem;background:rgba(0,212,255,0.03)">
+    <span style="font-family:'DM Mono',monospace;color:var(--cyan)">Agency &#9733; fastest</span>
+    <span style="color:var(--text2)">Deploy Helix for SMB clients. White-label. MW Dev is the prototype.</span>
+    <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted)">Cortex agency plan</span>
+  </div>
+  <div style="display:grid;grid-template-columns:150px 1fr 160px;gap:1rem;align-items:center;border:1px solid var(--border);padding:0.85rem 1rem;font-size:0.78rem">
+    <span style="font-family:'DM Mono',monospace;color:var(--text)">Developer</span>
+    <span style="color:var(--text2)">Building on Helix. SDK + API, webhooks, usage billing. Platform play.</span>
+    <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted)">Cortex API + SDK</span>
+  </div>
+  <div style="display:grid;grid-template-columns:150px 1fr 160px;gap:1rem;align-items:center;border:1px solid rgba(138,95,255,0.4);padding:0.85rem 1rem;font-size:0.78rem">
+    <span style="font-family:'DM Mono',monospace;color:var(--violet)">Enterprise</span>
+    <span style="color:var(--text2)">Self-hosted Helix upstream of entire tool stack. Full MCP gateway. Annual contract.</span>
+    <span style="font-family:'DM Mono',monospace;font-size:0.65rem;color:var(--muted)">Cortex + Gateway</span>
+  </div>
+</div>
+</div>
+
+
+<div class="callout" style="border-left-color:var(--violet)"><strong>The product is built in 7 layers.</strong> Each layer unlocks the next. Layer 0 is the foundation — without it nothing else ships. To first paying client: Layers 0 + 1 + 2 + 6d ≈ 6–8 sessions. Full product: ~15–20 sessions.</div>
+
+<div class="build-grid">
+  <div class="pipeline-col">
+
+    <div class="flow-block color-violet open">
+      <div class="flow-block-header" onclick="toggle(this)">
+        <div class="flow-title-wrap"><div class="flow-title">Layer 0 — Multi-Tenancy</div><div class="flow-subtitle">foundation — everything else requires this</div></div>
+        <span class="badge badge-p0">build first</span><span class="flow-toggle">▾</span>
+      </div>
+      <div class="flow-features"><div class="feature-list">
+        <div class="feature-item"><span class="feature-text"><code>tenants</code> table — tenant_id, subdomain, api_key_hash, plan, helix_schema, node_agent_token</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">Schema-per-tenant in existing Postgres. Not container-per-tenant until enterprise needed.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">RLS policies on all existing tables. Every query scoped to tenant_id automatically.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">Traefik wildcard: <code>*.helix.millyweb.com</code> → Helix with tenant extracted from subdomain.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">API key auth middleware on all Helix endpoints. Tenant provisioning endpoint.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">Unlocks: Ashley's instance, client instances, installer token flow, usage metering, collective intelligence isolation.</span></div>
+      </div></div>
+    </div>
+
+    <div class="flow-block color-cyan open mt-sm">
+      <div class="flow-block-header" onclick="toggle(this)">
+        <div class="flow-title-wrap"><div class="flow-title">Layer 1 — Helix as Gateway</div><div class="flow-subtitle">100% observer coverage — core product differentiator</div></div>
+        <span class="badge badge-p0">~2–3 sessions</span><span class="flow-toggle">▾</span>
+      </div>
+      <div class="flow-features"><div class="feature-list">
+        <div class="feature-item"><span class="feature-text"><strong>1a. stdio transport</strong> — Desktop spawns Helix directly. One config entry replaces three. 100% observer coverage on all Desktop tool calls.</span><span class="badge badge-proposed">~2 hrs</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>1b. Tool routing in /mcp/</strong> — Helix proxies any registered MCP server. Provisioner becomes optional. Every tool call logged before routing.</span><span class="badge badge-proposed">~1 session</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>1c. helix_init() tool</strong> — fires on first Desktop connect. Checks if node agent registered. Returns setup URL with pre-auth token if not.</span><span class="badge badge-proposed">~2 hrs</span></div>
+        <div class="feature-item"><span class="feature-text">Why it matters: Helix can only learn from what it sees. Making it the gateway means it sees everything. 30% coverage today → 100%.</span></div>
+      </div></div>
+    </div>
+
+    <div class="flow-block color-green open mt-sm">
+      <div class="flow-block-header" onclick="toggle(this)">
+        <div class="flow-title-wrap"><div class="flow-title">Layer 2 — Frictionless Installer</div><div class="flow-subtitle">OAuth-style onboarding — non-technical clients</div></div>
+        <span class="badge badge-p1">~1–2 sessions</span><span class="flow-toggle">▾</span>
+      </div>
+      <div class="flow-features"><div class="feature-list">
+        <div class="feature-item"><span class="feature-text"><strong>Setup landing page</strong> — helix.millyweb.com/setup?token=XYZ. OS detection. Token pre-authenticates — user never types URL or API key.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>Windows installer (.exe / MSIX)</strong> — installs node agent as service, generates + installs CA cert, configures proxy, patches Desktop config. One UAC prompt.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>Mac installer (.pkg)</strong> — same flow. LaunchAgent for background service. Keychain cert install.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">User experience: click link in Claude → browser opens → download .exe → run → one Yes → restart Desktop. Identical to installing Zoom.</span></div>
+      </div></div>
+    </div>
+
+    <div class="flow-block color-pink open mt-sm">
+      <div class="flow-block-header" onclick="toggle(this)">
+        <div class="flow-title-wrap"><div class="flow-title">Layer 3 — Desktop Capture</div><div class="flow-subtitle">fully transparent — MemBrain parity on Desktop</div></div>
+        <span class="badge badge-p1">~1 session</span><span class="flow-toggle">▾</span>
+      </div>
+      <div class="flow-features"><div class="feature-list">
+        <div class="feature-item"><span class="feature-text"><strong>HTTPS proxy (bidirectional)</strong> — intercepts Desktop → api.anthropic.com. Injects &#x3C;helix_context&#x3E; into outgoing messages. Captures responses. Transparent, no Claude cooperation.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>IndexedDB watcher (fallback)</strong> — watches Desktop LevelDB files. Catches any turns the proxy misses. Runs as part of node agent service.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">Desktop does NOT pin certificates. Uses system cert store. Electron apps respect installed trusted CAs.</span></div>
+      </div></div>
+    </div>
+
+  </div>
+  <div class="pipeline-col">
+
+    <div class="flow-block color-amber open">
+      <div class="flow-block-header" onclick="toggle(this)">
+        <div class="flow-title-wrap"><div class="flow-title">Layer 4 — Enrichment Engine</div><div class="flow-subtitle">intelligence gets better — phases 1b through 2</div></div>
+        <span class="badge badge-p1">~3–4 sessions</span><span class="flow-toggle">▾</span>
+      </div>
+      <div class="flow-features"><div class="feature-list">
+        <div class="feature-item"><span class="feature-text">Phase 1b: Smart content detector — code|config|prose|data|binary. Shared by both pipelines.</span><span class="badge badge-proposed">~2 hrs</span></div>
+        <div class="feature-item"><span class="feature-text">Phase 1c: Background file scanner — scheduled worker, hash-indexed, walks /opt/projects.</span><span class="badge badge-proposed">~4 hrs</span></div>
+        <div class="feature-item"><span class="feature-text">Phase 1d: Pipeline B scaffolding engine — intent parser + atom matcher + cascader + assembler.</span><span class="badge badge-proposed">~6 hrs</span></div>
+        <div class="feature-item"><span class="feature-text">Phase 2: Capture surfaces — SSH capture, git hooks, conversation extraction, stack trace parser.</span><span class="badge badge-proposed">~11 hrs</span></div>
+      </div></div>
+    </div>
+
+    <div class="flow-block color-indigo open mt-sm">
+      <div class="flow-block-header" onclick="toggle(this)">
+        <div class="flow-title-wrap"><div class="flow-title">Layer 5 — Collective Intelligence</div><div class="flow-subtitle">network effect — gets smarter with every client</div></div>
+        <span class="badge badge-p2">~2–3 sessions</span><span class="flow-toggle">▾</span>
+      </div>
+      <div class="flow-features"><div class="feature-list">
+        <div class="feature-item"><span class="feature-text"><strong>Shared atom catalog</strong> — structural fingerprints (normalized hashes) federated opt-in. No code shared. Client A solves a pattern → Client B gets scaffold on day 1.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>Failure pattern federation</strong> — error signature + known fixes shared anonymously. “2,400 Helix users hit this error. Here are the 3 solutions.”</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>Symbol compression sharing</strong> — high-frequency phrases promoted to global symbol table. Every tenant benefits from everyone’s compression savings.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text">Private layer always: file content, conversation prose, credentials. Shared layer: structural fingerprints, boilerplate, error signatures. Opt-in: patterns, decisions.</span></div>
+      </div></div>
+    </div>
+
+    <div class="flow-block color-teal open mt-sm">
+      <div class="flow-block-header" onclick="toggle(this)">
+        <div class="flow-title-wrap"><div class="flow-title">Layer 6 — Product Surface</div><div class="flow-subtitle">paying clients — marketplace — onboarding</div></div>
+        <span class="badge badge-p2">~2–3 sessions</span><span class="flow-toggle">▾</span>
+      </div>
+      <div class="flow-features"><div class="feature-list">
+        <div class="feature-item"><span class="feature-text"><strong>MillyGate tenant routing</strong> — *.helix.millyweb.com subdomain per tenant. ryan / ashley / client-X all isolated, all on same infrastructure.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>MCP server marketplace</strong> — catalog of 47+ servers. “Connect” button → credential form → Infisical injection → provisioner registration. Smithery experience + Helix intelligence.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>Usage metering dashboard</strong> — observer already logs every tool call with timing. Tool calls/day, tokens saved, atoms extracted, sessions. Billing hooks built in.</span><span class="badge badge-proposed">building</span></div>
+        <div class="feature-item"><span class="feature-text"><strong>Tenant onboarding flow</strong> — sign up → subdomain → API key → config snippet pre-filled → helix_init() handles the rest.</span><span class="badge badge-proposed">building</span></div>
+      </div></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="flywheel" style="margin-top:2rem">
+  <div class="fw-step"><div class="fw-icon">👥</div><h4>Client Uses Claude</h4><p>Any surface — Desktop, web, API</p><div class="fw-arrow">→</div></div>
+  <div class="fw-step"><div class="fw-icon">👁️</div><h4>Helix Sees Everything</h4><p>Gateway = 100% coverage. Every tool call observed.</p><div class="fw-arrow">→</div></div>
+  <div class="fw-step"><div class="fw-icon">🧠</div><h4>Intelligence Compounds</h4><p>Atoms, patterns, failures, symbols — all improve</p><div class="fw-arrow">→</div></div>
+  <div class="fw-step"><div class="fw-icon">🌍</div><h4>Everyone Benefits</h4><p>Shared catalog gets richer. New clients start smarter.</p></div>
+</div>
+
+<div class="callout" style="margin-top:2rem;border-left-color:var(--green)"><strong>The pitch:</strong> “AI that gets smarter every time you use it — and the more people use it, the smarter it gets for everyone.” Training data is frozen. Helix compounds daily from real users solving real problems.</div>
+<div class="page-footer"><div class="footer-logo">HELIX</div><div class="footer-copy">MW Development · millyweb.com · March 2026 · v1.0 feature list</div></div>
+</main>
+<script>
+function toggle(h){const b=h.closest('.flow-block');b.classList.toggle('open');}
+document.querySelectorAll('.flow-block-header').forEach(h=>h.addEventListener('click',()=>toggle(h)));
+const secs=document.querySelectorAll('[id]'),links=document.querySelectorAll('.nav-link');
+window.addEventListener('scroll',()=>{let c='';secs.forEach(s=>{if(window.scrollY>=s.offsetTop-80)c=s.id;});links.forEach(l=>{l.classList.remove('active');if(l.getAttribute('href')==='#'+c)l.classList.add('active');});});
+</script>
+</body>
+</html>

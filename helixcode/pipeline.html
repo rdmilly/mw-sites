@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helix Pipeline — Complete Data Flow</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0e14;color:#e2e8f0;min-height:100vh;padding:2rem 1rem 4rem}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1100px;margin:0 auto}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:2.5rem;padding-bottom:1rem;border-bottom:1px solid #1e2d3d}
+.logo{font-size:18px;font-weight:600;letter-spacing:-.01em;color:#e2e8f0}
+.logo span{color:#1d9e75}
+.back{font-size:13px;color:#64748b;border:1px solid #1e2d3d;padding:5px 12px;border-radius:6px;transition:all .15s}
+.back:hover{color:#e2e8f0;border-color:#2d4a6e}
+h1{font-size:26px;font-weight:600;letter-spacing:-.02em;margin-bottom:.4rem}
+.subtitle{font-size:14px;color:#64748b;margin-bottom:2rem}
+.zl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#475569;margin-bottom:6px;margin-top:14px}
+.zone{border-radius:10px;padding:12px 13px 14px;margin-bottom:4px;border:1px solid #1e2d3d;background:#0d1117}
+.row{display:flex;gap:7px;flex-wrap:wrap;align-items:stretch}
+.card{border-radius:8px;padding:10px 11px;flex:1;min-width:130px;border:1px solid transparent;display:flex;flex-direction:column;gap:3px;cursor:default}
+.n{font-size:12px;font-weight:600;line-height:1.3}
+.r{font-size:11px;opacity:.65;line-height:1.5;margin-top:2px}
+.tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px}
+.tag{font-size:10px;padding:2px 6px;border-radius:4px;border:1px solid transparent;font-weight:500;line-height:1.4;white-space:nowrap}
+.ad{text-align:center;color:#334155;font-size:13px;margin:3px 0;line-height:1}
+.ar{color:#334155;font-size:12px;align-self:center;flex-shrink:0}
+.sep{height:1px;background:#1e2d3d;width:100%;margin:6px 0}
+.nb{font-size:11px;color:#475569;margin-top:7px;padding:6px 10px;border-radius:6px;border:1px solid #1e2d3d;line-height:1.6}
+.nb strong{color:#64748b}
+.nb code{font-family:monospace;font-size:10px;color:#7dd3c0;background:#0a1628;padding:1px 4px;border-radius:3px}
+.step-row{display:flex;gap:6px;flex-wrap:wrap;align-items:stretch}
+.step-badge{font-size:9px;font-weight:700;opacity:.5;letter-spacing:.04em;margin-bottom:2px}
+/* color tokens */
+.pur{background:#1a1733;border-color:#4a3f9e;color:#c5bef7}.pur .tag{background:#1a1733;border-color:#4a3f9e;color:#a89df0}
+.tea{background:#0a2420;border-color:#1a7a5a;color:#7dd3c0}.tea .tag{background:#0a2420;border-color:#1a7a5a;color:#5ac5ab}
+.cor{background:#1e1008;border-color:#a0421a;color:#f5b89a}.cor .tag{background:#1e1008;border-color:#a0421a;color:#ef9a75}
+.blu{background:#0a1628;border-color:#2060a0;color:#90c4f0}.blu .tag{background:#0a1628;border-color:#2060a0;color:#70aee8}
+.amb{background:#1a1004;border-color:#8a5a0a;color:#f5c870}.amb .tag{background:#1a1004;border-color:#8a5a0a;color:#e8b850}
+.gry{background:#111418;border-color:#2d3748;color:#a0aec0}.gry .tag{background:#111418;border-color:#2d3748;color:#8896aa}
+.grn{background:#0a1c08;border-color:#3a7020;color:#8fcc70}.grn .tag{background:#0a1c08;border-color:#3a7020;color:#76bb55}
+.pnk{background:#1a0814;border-color:#8a2050;color:#f0a8cc}.pnk .tag{background:#1a0814;border-color:#8a2050;color:#e88ab8}
+.red{background:#180808;border-color:#802020;color:#f0a0a0}.red .tag{background:#180808;border-color:#802020;color:#e08888}
+.eb{background:#141006;border-color:#7a5808;color:#e8c060;width:100%}.eb .tag{background:#141006;border-color:#7a5808;color:#d4a840}
+.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid #1e2d3d;font-size:12px;color:#334155;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar">
+    <div class="logo">Helix<span>.</span>ai</div>
+    <a class="back" href="/">← helixcode.app</a>
+  </div>
+
+  <h1>Complete Data Flow Pipeline</h1>
+  <p class="subtitle">Every component, what it does, and how data moves through the system — Helix Cortex v0.8.1</p>
+
+  <!-- ENTRY -->
+  <div class="zl">Entry points — data sources</div>
+  <div class="zone">
+    <div class="row">
+      <div class="card pur"><span class="n">MemBrain v0.5.2</span><span class="r">Chrome extension. Intercepts every claude.ai message, injects KB context before send, writes conversation turns to local SQLite FTS db</span><div class="tags"><span class="tag">fetch intercept</span><span class="tag">context inject</span><span class="tag">SQLite write</span><span class="tag">tier-1</span></div></div>
+      <div class="card gry"><span class="n">inotify-agent</span><span class="r">Watches /opt/projects filesystem on VPS1. Fires on file write events, POSTs content to Helix ingest immediately</span><div class="tags"><span class="tag">fs watcher</span><span class="tag">inotifywait</span><span class="tag">POST /ingest</span></div></div>
+      <div class="card gry"><span class="n">git-hook-agent</span><span class="r">Post-commit hook. On every git commit ships changed files + diff to Helix. Also scaffolds conventional commit messages</span><div class="tags"><span class="tag">post-commit</span><span class="tag">diff capture</span><span class="tag">commit scaffold</span></div></div>
+      <div class="card gry"><span class="n">rclone-scan</span><span class="r">Polls Google Drive for new/changed files. Streams content to Helix ingest. Powers content pipeline for ~600 videos</span><div class="tags"><span class="tag">Google Drive</span><span class="tag">scheduled scan</span></div></div>
+      <div class="card gry"><span class="n">transcript-bridge</span><span class="r">Listens to Claude SSE stream. Converts conversation turns to structured events, separate from MCP tool-call telemetry</span><div class="tags"><span class="tag">SSE listener</span><span class="tag">turn events</span></div></div>
+      <div class="card pur"><span class="n">MCP gateway observer</span><span class="r">mcp-provision-filter batches every tool call across all 45 servers to /api/v1/observer/log — 697 tools captured</span><div class="tags"><span class="tag">observer hook</span><span class="tag">batch telemetry</span><span class="tag">697 tools</span></div></div>
+    </div>
+  </div>
+
+  <div class="ad">↓</div>
+
+  <!-- EVENT BUS -->
+  <div class="zl">Event bus — internal backbone</div>
+  <div class="zone">
+    <div class="card eb">
+      <span class="n">event_bus.py — universal pub/sub backbone</span>
+      <span class="r">The bus IS the queue table. Every service publishes typed events; the worker dispatches to registered handlers. Fan-out: one queue row → multiple subscribers in sequence. Priority levels: HIGH / NORMAL / LOW</span>
+      <div class="tags"><span class="tag">file.written</span><span class="tag">pattern.detected</span><span class="tag">entity.upserted</span><span class="tag">session.ingested</span><span class="tag">exchange.posted</span><span class="tag">synapse.completed</span><span class="tag">archive.recorded</span></div>
+    </div>
+  </div>
+
+  <div class="ad">↓ file.written event triggers write pipeline</div>
+
+  <!-- WRITE PIPELINE -->
+  <div class="zl">Write pipeline — 5 sequential steps on every helix_file_write</div>
+  <div class="zone">
+    <div class="step-row">
+      <div class="card tea"><div class="step-badge">STEP 1</div><span class="n">File Write</span><span class="r">Writes to /opt/projects or /opt/data. SHA-256 dedup — skips if identical hash. Publishes file.written event</span><div class="tags"><span class="tag">SHA-256 dedup</span><span class="tag">VPS write</span><span class="tag">event publish</span></div></div>
+      <div class="ar">→</div>
+      <div class="card grn"><div class="step-badge">STEP 2</div><span class="n">Forge scan</span><span class="r">Three-tier scanner: Tier-1 Tree-sitter AST, Tier-2 structural regex, Tier-3 Haiku-only for unknown languages (auto-learns after 20 samples). Haiku classify → extract → score. Upserts atoms + molecules</span><div class="tags"><span class="tag">Tree-sitter AST</span><span class="tag">3-tier scanner</span><span class="tag">Haiku classify</span><span class="tag">Haiku extract</span><span class="tag">Haiku score</span><span class="tag">989 atoms</span><span class="tag">113 molecules</span></div></div>
+      <div class="ar">→</div>
+      <div class="card blu"><div class="step-badge">STEP 3</div><span class="n">KB index</span><span class="r">512-token chunks with overlap. BGE-large-en-v1.5 embed (1024-dim). Upserts into ChromaDB (dense RAG) + Postgres FTS. Creates workbench entry</span><div class="tags"><span class="tag">512-tok chunks</span><span class="tag">BGE-large embed</span><span class="tag">ChromaDB</span><span class="tag">Postgres FTS</span></div></div>
+      <div class="ar">→</div>
+      <div class="card amb"><div class="step-badge">STEP 4</div><span class="n">KG entities</span><span class="r">Haiku extracts entity nodes (10 types: container, service, project, domain, tool, person, concept, database, port, adr) + typed edges. Upserts into Neo4j. Intelligence Chain auto-wires intent→ADR→impl chains</span><div class="tags"><span class="tag">Haiku extract</span><span class="tag">Neo4j upsert</span><span class="tag">10 entity types</span><span class="tag">ADR chains</span></div></div>
+      <div class="ar">→</div>
+      <div class="card cor"><div class="step-badge">STEP 5</div><span class="n">Observer log</span><span class="r">Structured exchange archived. MinIO version snapshot. Auto-routes: decisions/patterns/failures → structured_archive, entities → KG. Session summary written</span><div class="tags"><span class="tag">exchange archive</span><span class="tag">MinIO version</span><span class="tag">session capture</span></div></div>
+    </div>
+  </div>
+
+  <div class="ad">↓ background engines run continuously</div>
+
+  <!-- BACKGROUND ENGINES -->
+  <div class="zl">Background intelligence engines — running inside helix-cortex</div>
+  <div class="zone">
+    <div class="row" style="margin-bottom:6px">
+      <div class="card gry"><span class="n">Compression engine</span><span class="r">4-layer pipeline: ① Pattern Ref — replace patterns with §symbols ② Boilerplate Dedup — collapse repeated imports ③ Shorthand — abbreviate common terms ④ Context Pruning — remove low-relevance content. Versioned dictionary — decompression always uses matched expansion</span><div class="tags"><span class="tag">4 layers</span><span class="tag">§symbol notation</span><span class="tag">versioned dict</span><span class="tag">token metrics</span></div></div>
+      <div class="card gry"><span class="n">Shard assembler</span><span class="r">Builds context shards via diff chains — not full state. DELTA mode = base_summary + diffs since last session. Cost scales with recency of change, not project size. SNAPSHOT on first access or &gt;80% budget changed</span><div class="tags"><span class="tag">diff chains</span><span class="tag">DELTA mode</span><span class="tag">SNAPSHOT mode</span><span class="tag">token-budget</span></div></div>
+      <div class="card gry"><span class="n">Synapse</span><span class="r">Phase 3 context assembly. On inject request: searches atoms, sessions, entities, decisions across ChromaDB + Postgres. Scores and ranks by relevance to current session. Assembles context packet for MemBrain injection</span><div class="tags"><span class="tag">multi-source search</span><span class="tag">relevance rank</span><span class="tag">context packet</span><span class="tag">MemBrain feed</span></div></div>
+      <div class="card gry"><span class="n">Reconciler</span><span class="r">Hourly Haiku pass over structured_archive. Extracts: decisions, patterns, failures (dead ends + negative signals — things tried and rejected). Auto-writes to journal.md + ADR files. Watermark-based</span><div class="tags"><span class="tag">hourly</span><span class="tag">Haiku extract</span><span class="tag">failure signals</span><span class="tag">auto-journal</span><span class="tag">ADR writer</span></div></div>
+    </div>
+    <div class="row">
+      <div class="card gry"><span class="n">Concepts</span><span class="r">Semantic enrichment on atoms. Haiku extracts essence, why it exists, how it works, constraints, tradeoffs, relationships. Writes into EDA namespaces on atom meta JSON — zero schema changes. Atoms grow richer with every exposure</span><div class="tags"><span class="tag">semantic enrichment</span><span class="tag">EDA namespaces</span><span class="tag">essence/why/how</span><span class="tag">no schema change</span></div></div>
+      <div class="card gry"><span class="n">Assembler</span><span class="r">Composes atoms → molecules via section merging (not template rendering). Sections: imports, config, models, middleware, tools, routes, startup, shutdown, utility. Deduplicates imports. Output modes: code, documentation, manifest, compressed</span><div class="tags"><span class="tag">section merge</span><span class="tag">import dedup</span><span class="tag">4 output modes</span><span class="tag">atoms→molecules</span></div></div>
+      <div class="card gry"><span class="n">Membrane</span><span class="r">Forge↔Helix bridge. Bulk import pulls all atoms from Forge catalog API. Incremental sync polls for new atoms. Webhook intake accepts push from Forge on scans. Maps Forge schema → Helix schema, embeds, upserts</span><div class="tags"><span class="tag">Forge↔Helix bridge</span><span class="tag">bulk + incremental</span><span class="tag">webhook intake</span></div></div>
+      <div class="card gry"><span class="n">Ingester</span><span class="r">Every 5 min: reads conversations_fts.db written by MemBrain. Deduplicates by session_id. Upserts session records into Postgres. Triggers async Haiku enrichment on new sessions. Watermark-based</span><div class="tags"><span class="tag">5-min poll</span><span class="tag">FTS SQLite read</span><span class="tag">Haiku enrich</span><span class="tag">watermark</span></div></div>
+    </div>
+  </div>
+
+  <div class="ad">↓</div>
+
+  <!-- SCHEDULER + STORES -->
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:4px">
+    <div style="flex:1;min-width:220px">
+      <div class="zl">Scheduler — 7 built-in asyncio jobs</div>
+      <div class="zone">
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;border-radius:5px;background:#0d1117;border:1px solid #1e2d3d"><span style="font-size:11px;font-weight:500;color:#a0aec0">conversation_ingester</span><span style="font-size:10px;color:#475569">every 5 min</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;border-radius:5px;background:#0d1117;border:1px solid #1e2d3d"><span style="font-size:11px;font-weight:500;color:#a0aec0">haiku_reconciler</span><span style="font-size:10px;color:#475569">every 1 hour</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;border-radius:5px;background:#0d1117;border:1px solid #1e2d3d"><span style="font-size:11px;font-weight:500;color:#a0aec0">file_scanner</span><span style="font-size:10px;color:#475569">every 4 hours</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;border-radius:5px;background:#0d1117;border:1px solid #1e2d3d"><span style="font-size:11px;font-weight:500;color:#a0aec0">db_backup</span><span style="font-size:10px;color:#475569">every 6 hours</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;border-radius:5px;background:#0d1117;border:1px solid #1e2d3d"><span style="font-size:11px;font-weight:500;color:#a0aec0">compression_profiles</span><span style="font-size:10px;color:#475569">daily</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;border-radius:5px;background:#0d1117;border:1px solid #1e2d3d"><span style="font-size:11px;font-weight:500;color:#a0aec0">phrase_promotion</span><span style="font-size:10px;color:#475569">daily</span></div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline;padding:5px 8px;border-radius:5px;background:#0d1117;border:1px solid #1e2d3d"><span style="font-size:11px;font-weight:500;color:#a0aec0">pattern_decay</span><span style="font-size:10px;color:#475569">weekly</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:2;min-width:280px">
+      <div class="zl">Storage layer</div>
+      <div class="zone">
+        <div class="row">
+          <div class="card blu"><span class="n">Postgres + pgvector</span><span class="r">Atoms, molecules, KB docs, entities, sessions, structured_archive, 1024-dim BGE vectors. Cosine similarity search</span><div class="tags"><span class="tag">atom catalog</span><span class="tag">KG entities</span><span class="tag">vectors</span></div></div>
+          <div class="card blu"><span class="n">ChromaDB</span><span class="r">Dedicated RAG vector store. Chunked document embeddings for dense passage retrieval. Separate from Postgres</span><div class="tags"><span class="tag">dense RAG</span><span class="tag">passage chunks</span></div></div>
+          <div class="card amb"><span class="n">Neo4j</span><span class="r">Knowledge graph: 10 entity types, typed edges (depends_on, contains, runs_on, produced). intent→ADR→impl chains</span><div class="tags"><span class="tag">KG</span><span class="tag">ADR chains</span></div></div>
+          <div class="card grn"><span class="n">Garage S3 (Forge)</span><span class="r">Forge-local S3. Workspace files, versioned file snapshots. Forge-owned, shared helix network</span><div class="tags"><span class="tag">workspace</span><span class="tag">versioned snaps</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ad" style="margin-top:6px">↑ retrieval flows back through helix-mcp to Claude</div>
+
+  <!-- RETRIEVAL -->
+  <div class="zl">Retrieval — MCP tools surfaced to Claude</div>
+  <div class="zone">
+    <div class="row">
+      <div class="card grn"><span class="n">helix_search_kb</span><span class="r">Dense + FTS hybrid. ChromaDB + Postgres. Ranked chunks with source, preview, score</span><div class="tags"><span class="tag">dense + FTS</span><span class="tag">ranked results</span></div></div>
+      <div class="card grn"><span class="n">helix_suggest</span><span class="r">Semantic atom catalog search. Returns patterns with language, type, concept essence, usage count, relationships</span><div class="tags"><span class="tag">atom search</span><span class="tag">cosine similarity</span></div></div>
+      <div class="card amb"><span class="n">helix_query_entity</span><span class="r">Neo4j exact lookup. Full entity: type, description, all relationships, ADR chain, recent mentions</span><div class="tags"><span class="tag">Neo4j</span><span class="tag">full entity</span></div></div>
+      <div class="card amb"><span class="n">helix_search_entities</span><span class="r">Fuzzy KG search by name or type. Use when exact entity name is unknown</span><div class="tags"><span class="tag">fuzzy KG</span><span class="tag">by type filter</span></div></div>
+      <div class="card pur"><span class="n">helix_search_conversations</span><span class="r">FTS + semantic over exchange archive. Finds past decisions, sessions, code patterns from history</span><div class="tags"><span class="tag">exchange archive</span><span class="tag">session history</span></div></div>
+      <div class="card cor"><span class="n">helix_exchange_post</span><span class="r">Write tool. Logs structured observation. Auto-routes to archive, KG, or atom scan based on content type</span><div class="tags"><span class="tag">structured log</span><span class="tag">auto-route</span></div></div>
+      <div class="card tea"><span class="n">helix_file_write</span><span class="r">The unified write entry point. Triggers all 5 pipeline steps. The mandatory path for all VPS file operations</span><div class="tags"><span class="tag">unified write</span><span class="tag">triggers pipeline</span><span class="tag">mandatory path</span></div></div>
+    </div>
+  </div>
+
+  <div class="nb" style="margin-top:8px">
+    <strong>Forge relationship:</strong> The Forge runs on the <code>helix</code> Docker network (co-located, peer service) but has its own compose at /opt/projects/the-forge/. The <strong>Membrane</strong> service inside Cortex syncs atoms from Forge into Helix Postgres/ChromaDB. helix-mcp proxies atom catalog tools to http://the-forge:9095 directly. &nbsp;|&nbsp; <strong>MCP pipeline</strong> (Provisioner, mcp-root-proxy, mcp-provision-filter) is external routing infrastructure — Helix runs fully without it. &nbsp;|&nbsp; <strong>Provisioner</strong> registers helix-mcp as one of 45 servers. No startup dependency.
+  </div>
+
+  <div class="footer">
+    <span>Helix Cortex v0.8.1 &mdash; MW Development</span>
+    <span>VPS1 &mdash; 72.60.31.69 &mdash; helixcode.app</span>
+  </div>
+</div>
+</body>
+</html>

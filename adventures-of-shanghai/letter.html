@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Letter About Adventures of Shanghai — For Ashley</title>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#FAF7F2;
+  --paper:#FFFEFB;
+  --ink:#2A2422;
+  --ink2:#574E48;
+  --ink3:#8A7E76;
+  --accent:#B85C38;
+  --accent-soft:#E8D4C8;
+  --accent-bg:#F5EBE3;
+  --green:#5A7D58;
+  --amber:#C18A3A;
+  --line:#E8E0D5;
+  --line2:#D5C8B8;
+  --serif:'Newsreader',Georgia,serif;
+  --sans:'Inter',-apple-system,sans-serif;
+  --hand:'Caveat',cursive;
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:18.5px;
+  line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+.page{
+  max-width:680px;
+  margin:0 auto;
+  padding:72px 36px 100px;
+}
+
+/* HERO */
+.hero{
+  text-align:center;
+  margin-bottom:56px;
+  padding-bottom:36px;
+}
+.eyebrow{
+  font-family:var(--sans);
+  font-size:11px;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:600;
+  margin-bottom:24px;
+}
+.hero h1{
+  font-family:var(--serif);
+  font-size:42px;
+  font-weight:500;
+  line-height:1.15;
+  letter-spacing:-0.02em;
+  margin-bottom:18px;
+  color:var(--ink);
+}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero .for{
+  font-family:var(--hand);
+  font-size:26px;
+  color:var(--accent);
+  margin-top:14px;
+}
+
+/* DROP CAP */
+.drop-cap::first-letter{
+  font-family:var(--serif);
+  font-size:68px;
+  font-weight:500;
+  float:left;
+  line-height:0.9;
+  margin:6px 10px -4px 0;
+  color:var(--accent);
+}
+
+/* SECTIONS */
+section{margin-bottom:48px}
+h2{
+  font-family:var(--serif);
+  font-size:30px;
+  font-weight:500;
+  line-height:1.25;
+  letter-spacing:-0.01em;
+  margin-bottom:18px;
+  margin-top:8px;
+  color:var(--ink);
+}
+h2 em{font-style:italic;color:var(--accent)}
+h3{
+  font-family:var(--serif);
+  font-size:22px;
+  font-weight:600;
+  margin-top:28px;
+  margin-bottom:12px;
+  letter-spacing:-0.005em;
+  color:var(--ink);
+}
+p{margin-bottom:18px;color:var(--ink)}
+em.aside{
+  color:var(--ink3);
+  font-style:italic;
+}
+
+/* PULL QUOTE */
+.pull{
+  border-left:3px solid var(--accent);
+  padding:8px 0 8px 28px;
+  margin:36px 0;
+  font-size:24px;
+  font-style:italic;
+  line-height:1.45;
+  color:var(--ink);
+  font-weight:400;
+}
+.pull-attr{
+  font-family:var(--sans);
+  font-size:12px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:var(--ink3);
+  margin-top:14px;
+  font-weight:500;
+  font-style:normal;
+}
+
+/* DIVIDER */
+.divider{
+  text-align:center;
+  margin:48px 0;
+  color:var(--accent);
+  font-family:var(--serif);
+  font-size:22px;
+  letter-spacing:1.2em;
+  font-weight:300;
+}
+
+/* HONEST BOX */
+.honest{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-left:3px solid var(--amber);
+  border-radius:0 8px 8px 0;
+  padding:24px 28px;
+  margin:32px 0;
+}
+.honest .label{
+  font-family:var(--sans);
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--amber);
+  font-weight:600;
+  margin-bottom:10px;
+}
+.honest p{font-size:17px;line-height:1.6}
+.honest p:last-child{margin-bottom:0}
+
+/* TWO COL CARDS */
+.cards{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  margin:28px 0;
+}
+.card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:22px 24px;
+}
+.card h4{
+  font-family:var(--sans);
+  font-size:11px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:600;
+  margin-bottom:10px;
+}
+.card p{
+  font-size:16px;
+  line-height:1.55;
+  margin-bottom:0;
+  color:var(--ink2);
+}
+
+/* SIGNATURE */
+.signoff{
+  margin-top:64px;
+  padding-top:36px;
+  border-top:1px solid var(--line);
+}
+.signoff p{font-size:18px;margin-bottom:14px}
+.signature{
+  font-family:var(--hand);
+  font-size:34px;
+  color:var(--accent);
+  margin-top:18px;
+  line-height:1;
+}
+.footnote{
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--ink3);
+  margin-top:24px;
+  line-height:1.55;
+}
+.footnote a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-soft)}
+.footnote a:hover{border-bottom-color:var(--accent)}
+
+@media(max-width:600px){
+  .page{padding:48px 22px 60px}
+  .hero h1{font-size:32px}
+  body{font-size:17px}
+  h2{font-size:24px}
+  .cards{grid-template-columns:1fr}
+  .pull{font-size:20px;padding-left:20px}
+}
+
+@media print{
+  body{background:white}
+  .page{padding:30px;max-width:100%}
+  .pull,.honest,.card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hero">
+  <div class="eyebrow">A Letter · May 2026</div>
+  <h1>About <em>Adventures of Shanghai</em>,<br>and where it could go.</h1>
+  <div class="for">For Ashley — from Ryan & Claude</div>
+</div>
+
+<section>
+  <p class="drop-cap">Adventures of Shanghai started as something we love. That hasn't changed. But somewhere along the way it also started costing us — gas, food, time, the camera gear, the editing software, the trips that we keep saying we'll figure out how to pay for later. And we've reached the point where we have to be honest with each other: it has to start covering itself, or it has to change shape, or eventually we'll burn out on something we used to love.</p>
+
+  <p>This letter isn't trying to talk you into anything. It's an attempt to put the case down on paper so you can read it on your own time, sit with it, and come back with whatever you actually think — including "no, I want to do something different." That's a real option and a fine one.</p>
+
+  <p>But before you decide, here's the case for why we think the Substack idea might be the right next chapter — and what it would actually ask of you.</p>
+</section>
+
+<div class="divider">· · ·</div>
+
+<section>
+  <h2>What you've already noticed.</h2>
+
+  <p>You said something a few weeks ago that stuck with me: that you'd want to sit down and write reading-feature pieces. Real ones — long, researched, properly told. I think that instinct is worth more than you give it credit for.</p>
+
+  <p>The strongest stuff we've ever made hasn't been the location B-roll. It's been the moments where you're telling the story of a place, a person, a mystery — and the writing is doing the heavy lifting underneath. The Oculus Anubis pieces. The cult deep-dives. The forgotten history. When you're in your element on those, it doesn't matter what we filmed that day. The story is the thing.</p>
+
+  <p>The Substack plan is, at its core, just this: <strong>let's stop trying to fit the strongest version of what you do into the format that pays it the least.</strong></p>
+
+  <div class="pull">
+    Video on TikTok pays nothing at 4,000 followers. Writing — long, careful, paid writing — can pay something meaningful at 4,000 followers if even a small fraction of them are the right kind of obsessed.
+    <div class="pull-attr">The shift in plain terms</div>
+  </div>
+</section>
+
+<section>
+  <h2>Why this fits <em>you</em> specifically.</h2>
+
+  <p>There's a pattern in how creator economies have shifted over the last two years, and it matters because it's exactly the pattern that favors the kind of work you want to do.</p>
+
+  <p>The mass-audience model — millions of followers, ad revenue, brand deals — is brutal right now. It rewards volume, speed, and a particular kind of personality that I don't think either of us would want to spend our life performing. But the niche-audience model has gotten dramatically stronger. People are paying for deep, slow, careful work in ways they weren't five years ago, because there's so much fast, shallow content drowning everything else out that anyone doing the opposite stands out by contrast.</p>
+
+  <p>True crime and investigative writing is one of the highest-paying niches on Substack right now, and it's the niche where reader loyalty is the strongest. Not because true crime is special — but because the readers who love it <em>really</em> love it, and they're used to paying for it through podcasts, books, and documentary subscriptions. We'd be walking into a market that already knows how to be a customer.</p>
+
+  <div class="cards">
+    <div class="card">
+      <h4>What it asks of you</h4>
+      <p>Roughly 5 hours a week of writing and research, in a rhythm we set up together. The thing you already wanted to do — but with structure around it.</p>
+    </div>
+    <div class="card">
+      <h4>What it gives back</h4>
+      <p>Your work as a writer becomes visible and paid. The format finally fits the voice. And the days when filming is rained out aren't lost days anymore.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>The honest part.</h2>
+
+  <p>I don't want to oversell this. Here's what I'd want to know if I were on the other side of this letter:</p>
+
+  <div class="honest">
+    <div class="label">The real risks</div>
+    <p><strong>Writing on a schedule is harder than wanting to write.</strong> The romance of "I'll write long features" runs into the reality of Tuesday night, you're tired, Legend needs something, and the deadline is Thursday. That's the test. If after a month it feels like a chore instead of a calling, we should know early and adjust.</p>
+    <p><strong>The first 90 days will probably feel like nothing's working.</strong> Newsletters are slow to build. We'd be aiming for 30–50 free subscribers and 5–10 paying ones by end of month one. Numbers that look small. The compound part comes later.</p>
+    <p><strong>It changes how we shoot.</strong> Cutting location trips to one per month means more research at the kitchen table and less in the field. That's a tradeoff. The upside is sustainability; the downside is the part that's most fun gets rarer.</p>
+  </div>
+
+  <p>If any of those land badly, that's the conversation. We don't have to do this. But I want you to know I've thought about the costs, not just the upside.</p>
+</section>
+
+<section>
+  <h2>What this looks like, six months from now, if it works.</h2>
+
+  <p>I want to paint the picture concretely, because "build a Substack" is abstract and the lived version of it isn't.</p>
+
+  <p>By November, the rhythm has settled. You write one feature piece a week, usually Monday or Tuesday. Some weeks it's a deep dive into a PNW cult — the kind of writing where you fall into the research for hours and lose track of time, which has always been your favorite way to be working. Some weeks it's a forgotten location, or a piece of history nobody else is telling. The writing comes out of you in a way the videos never quite did, because written long-form is finally the right shape for the way your mind already works on this stuff.</p>
+
+  <p>We do one location trip a month, properly planned, properly funded by the subscribers who showed up early. The trips feel like events now, not obligations.</p>
+
+  <p>There are 60 or 80 paying subscribers. That's not life-changing money — call it $500–800 a month, plus a sponsorship or two from a regional tourism board or ghost-tour operator who wants to be in front of our audience. The numbers will keep growing slowly. But the project pays for itself. It pays for the camera gear, the gas, the editing software, the trips. We stop arguing about whether we can afford to keep doing this.</p>
+
+  <p>And there's a public archive of your writing — a real one, with real readers, the kind of body of work that exists somewhere you can point at and say "I made that." Which, honestly, I think you've wanted for a while.</p>
+
+  <div class="pull">
+    The version of this that works isn't us getting famous. It's us building something small and good that supports itself, with you as the writer it deserves.
+    <div class="pull-attr">The actual goal</div>
+  </div>
+</section>
+
+<section>
+  <h2>What we'd need from you to start.</h2>
+
+  <p>Not a yes. Not a no. Just one thing: 90 minutes, together, to talk about the sharper edge — what Adventures of Shanghai actually <em>is</em> at its core, in one sentence we both believe.</p>
+
+  <p>That conversation is the only thing blocking everything else. Until we have that sentence, none of the rest of the plan can be acted on. After that conversation, we'll know within a week whether you actually want to try this. You write a single feature piece. If the writing comes alive in your hands — if you feel the thing you used to feel when you got obsessed with the Oculus Anubis stuff — then we keep going. If it doesn't, we don't.</p>
+
+  <p>That's the whole ask right now. One conversation, then one piece of writing, then a decision. Not a six-month commitment up front.</p>
+</section>
+
+<div class="divider">· · ·</div>
+
+<section>
+  <p>I'll be honest about the meta-thing too: I asked Claude to write this for me because I wanted to make sure I was making the strongest version of the case rather than the version that was bouncing around in my head at 11pm. Some of these words are his, some are mine, all of them I'd stand behind. You'd see through it anyway if I tried to pretend otherwise.</p>
+
+  <p>What I want most isn't for you to say yes to this plan. It's for us to decide together what the next year of Adventures of Shanghai looks like — whatever that is. This plan is one option. There are others. But if we're going to keep doing this, we need a version of it that doesn't quietly bleed us out, and this is the most promising version I've been able to find.</p>
+
+  <p>Read it whenever. Think about it whenever. Come back to me when you're ready.</p>
+</section>
+
+<div class="signoff">
+  <p>With love and a lot of faith in what you can do with this,</p>
+  <div class="signature">Ryan</div>
+  <div class="footnote">
+    The full plan with all the details, time estimates, and open questions is at <a href="https://aos.millyweb.com">aos.millyweb.com</a>. This letter is the why; that page is the how.
+  </div>
+</div>
+
+</div>
+</body>
+</html>

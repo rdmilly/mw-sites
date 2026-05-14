@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ryan Milly</title>
+    <meta name="description" content="Builder, operator, and self-taught technologist. From scaling a service business to $432K to building AI infrastructure from scratch.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400;1,6..72,500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #FAF7F2;
+            --bg-letter: #F5F0E8;
+            --text: #2A2521;
+            --text-light: #6B5E54;
+            --accent: #B85C38;
+            --accent-soft: #D4956B;
+            --rule: #DDD5CA;
+            --font-body: 'Newsreader', Georgia, serif;
+            --font-display: 'Playfair Display', Georgia, serif;
+            --font-hand: 'Caveat', cursive;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-body);
+            font-size: 19px;
+            font-weight: 400;
+            line-height: 1.85;
+        }
+
+        .essay {
+            max-width: 660px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        .hero {
+            padding: 120px 0 80px;
+            text-align: left;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: 3.2rem;
+            font-weight: 500;
+            letter-spacing: -0.02em;
+            line-height: 1.15;
+            color: var(--text);
+            margin-bottom: 28px;
+        }
+
+        .hero .hook {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-light);
+            line-height: 1.7;
+            max-width: 520px;
+            font-weight: 300;
+        }
+
+        .section {
+            margin-bottom: 56px;
+        }
+
+        .section p {
+            margin-bottom: 24px;
+        }
+
+        .section p:last-child {
+            margin-bottom: 0;
+        }
+
+        .pull-quote {
+            margin: 64px 0;
+            padding: 0 0 0 28px;
+            border-left: 3px solid var(--accent);
+            font-family: var(--font-display);
+            font-size: 1.35rem;
+            font-style: italic;
+            line-height: 1.65;
+            color: var(--text-light);
+        }
+
+        .rule {
+            width: 80px;
+            height: 1px;
+            background: var(--rule);
+            margin: 72px auto;
+            border: none;
+        }
+
+        .label {
+            font-family: var(--font-body);
+            font-size: 0.72rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+
+        .letter-container {
+            margin: 80px 0 120px;
+        }
+
+        .letter {
+            background: var(--bg-letter);
+            border-radius: 4px;
+            padding: 52px 48px;
+            position: relative;
+        }
+
+        .letter::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-soft), transparent);
+            border-radius: 4px 4px 0 0;
+        }
+
+        .letter p {
+            font-family: var(--font-hand);
+            font-size: 1.45rem;
+            line-height: 1.75;
+            color: var(--text);
+            margin-bottom: 20px;
+        }
+
+        .letter p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .signature {
+            margin-top: 36px;
+            padding-top: 12px;
+        }
+
+        .signature .name {
+            font-family: var(--font-hand);
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .signature .location {
+            font-family: var(--font-body);
+            font-size: 0.82rem;
+            color: var(--text-light);
+            letter-spacing: 0.04em;
+            margin-top: 4px;
+        }
+
+        .footer {
+            padding: 48px 0 80px;
+            text-align: center;
+            border-top: 1px solid var(--rule);
+        }
+
+        .footer .reach {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+
+        .footer a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        strong {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            border-bottom: 1px solid var(--accent-soft);
+            transition: border-color 0.2s ease;
+        }
+
+        a:hover {
+            border-bottom-color: var(--accent);
+        }
+
+        @media (max-width: 680px) {
+            body {
+                font-size: 17px;
+            }
+
+            .hero {
+                padding: 80px 0 56px;
+            }
+
+            .hero h1 {
+                font-size: 2.4rem;
+            }
+
+            .hero .hook {
+                font-size: 1.1rem;
+            }
+
+            .pull-quote {
+                font-size: 1.15rem;
+                margin: 48px 0;
+            }
+
+            .letter {
+                padding: 36px 28px;
+            }
+
+            .letter p {
+                font-size: 1.3rem;
+            }
+
+            .rule {
+                margin: 56px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<main class="essay">
+
+    <header class="hero">
+        <h1>Ryan Milly</h1>
+        <p class="hook">I see what's broken, and I can't leave it that way.<br>That instinct has shaped everything I've built.</p>
+    </header>
+
+    <div class="section">
+        <p>I started at a moving company in Oregon that was, to put it politely, a mess. Trucks going out half-loaded. Customers left waiting. A crew that showed up when they felt like it. The kind of operation where everyone could see the problems, but no one seemed bothered enough to do anything about them.</p>
+        <p>I was bothered.</p>
+        <p>Not in a righteous way — more like an itch I couldn't ignore. I'd watch a job fall apart because nobody had thought two steps ahead, and I'd find myself reorganizing the truck, rebuilding the route, calling the customer before they called us. Not because someone asked me to. Because the gap between how things <em>were</em> and how they <em>could be</em> was something I could feel in my chest.</p>
+        <p>That gap became my career.</p>
+    </div>
+
+    <hr class="rule">
+
+    <div class="section">
+        <p>What started as not being able to leave things broken became a company. I founded Confidence Home Services and built it from nothing into a $432K-revenue operation with 25 employees. I didn't have a business degree. I didn't have investors. I had the instinct to see what was wrong, take ownership of it, figure out a solution, and execute — usually in that order, usually before lunch.</p>
+        <p>I ran every dimension of it. Logistics, sales, customer relations. Marketing campaigns across print, door-to-door, affiliate lead channels, and a full online presence — social channels, review platforms, the entire digital footprint. I developed the team. I delivered the service. I was in the truck and in the spreadsheet on the same day.</p>
+        <p>The five things that made it work weren't strategies I learned from a book. They were qualities I developed through years of showing up and figuring it out: integrity, accountability, clear communication, empathy, and the willingness to empower other people by trusting them with real responsibility. I didn't have names for these at the time. They were just how I operated.</p>
+    </div>
+
+    <div class="pull-quote">
+        I didn't learn a leadership framework. I built a company, and when I looked back at what had actually worked, I realized I'd been living one all along.
+    </div>
+
+    <div class="section">
+        <p>It was only later, after I'd sold the business and had space to reflect, that I came across something called the Oz Principle — a framework built on four steps: See It, Own It, Solve It, Do It. The idea is that accountability isn't about blame. It's about seeing reality clearly, taking ownership of your piece of it, working the problem, and then actually doing the thing.</p>
+        <p>Reading it felt like reading a description of my own operating system. Every decision I'd made — from reorganizing that first truck to scaling a company to 25 people — had followed that exact pattern. See the problem no one else wanted to see. Own it, even when it wasn't technically my job. Work it until there's a path forward. Then move.</p>
+        <p>There's something grounding about discovering that the thing you've been doing instinctively has a name. It doesn't validate you exactly — the work already did that. But it gives you language. And language lets you be intentional about what used to be automatic.</p>
+    </div>
+
+    <hr class="rule">
+
+    <div class="section">
+        <p>Six months ago, I went all-in on something new.</p>
+        <p>I'd been watching artificial intelligence reshape how work gets done, and I felt the same thing I'd felt in the back of that moving truck — the gap between where things were and where they could be. So I did what I always do. I started building.</p>
+        <p>I'm self-taught and low-code by background, which means I had to learn in public, break things constantly, and build my own tools when existing ones didn't fit. What came out of that process surprised even me.</p>
+        <p><strong>Helix Cortex</strong> — an AI memory and intelligence platform I built from scratch, running on PostgreSQL, pgvector, Neo4j, and Redis. It gives AI systems the ability to remember, reason across contexts, and learn from their own tool usage. It's production infrastructure, not a demo.</p>
+        <p><strong>MemBrain</strong> — a Chrome extension that intercepts browser activity and injects contextual memory into AI conversations. I built the fetch interception architecture, the fact extraction pipeline, the IndexedDB persistence layer — all of it, from first principles.</p>
+        <p><strong>The MCP Provisioner</strong> — a dynamic server lifecycle system managing 45+ servers and 697 tools. Containers spin up when needed and wind down when they don't, replacing always-on infrastructure with something leaner and smarter.</p>
+        <p>I also published research on what I call <strong>epigenetic code architecture</strong> — the idea that code can carry metadata that influences its own behavior and evolution, the way biological epigenetics works. That research started as a system design pattern inside Helix and became a formal paper.</p>
+        <p>None of this came from a CS degree. It came from the same instinct it always has: see the gap, own the problem, build the solution, ship it.</p>
+    </div>
+
+    <div class="pull-quote">
+        I didn't pivot from service businesses to technology. I applied the same operating system to a different domain.
+    </div>
+
+    <div class="section">
+        <p>Today I run <strong>MW Development</strong>, an AI automation agency that helps service businesses in the $500K–$5M range use AI where it actually matters — not as a novelty, but as infrastructure. I know what it's like to run a service business. I know where the pain is. That's the unfair advantage.</p>
+        <p>I also run <strong>Confidence Lighting</strong>, a seasonal Christmas lights installation company. It's physical work, and I like physical work. There's something clarifying about spending a morning on a roofline and an afternoon in a codebase.</p>
+        <p>And then there's <strong>Adventures of Shanghai</strong> — my investigative content project about the Pacific Northwest. I explore mysterious locations, uncover hidden stories, and share them with about 4,000 followers on TikTok. It's the creative outlet. The thing I do because the stories are worth telling, regardless of what it produces.</p>
+        <p>I live in Newberg, Oregon with my wife Ashley and our son Legend. Ashley runs a nanny service called Just Little Steps. Our life is small-town and hands-on, and that's by design.</p>
+    </div>
+
+    <hr class="rule">
+
+    <div class="letter-container">
+        <p class="label">A note, personally</p>
+        <div class="letter">
+            <p>If you've read this far, you're probably trying to figure out what kind of person I am — whether I'm someone you'd want to work with, hire, or build something alongside.</p>
+            <p>Here's what I can tell you honestly: I'm not the most credentialed person you'll meet. I don't have the pedigree. What I have is a pattern — one that's held up across a decade of building things from nothing, in industries I had no business entering, with skills I taught myself along the way.</p>
+            <p>I see what needs to be done. I take responsibility for it. I work the problem. And I follow through.</p>
+            <p>That's it. That's the whole thing. Everything else is just context.</p>
+            <p>If that resonates, I'd genuinely love to hear from you.</p>
+            <div class="signature">
+                <div class="name">Ryan Milly</div>
+                <div class="location">Newberg, Oregon</div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p class="reach">
+            <a href="mailto:ryan@mwdevelopment.com">ryan@mwdevelopment.com</a>
+            &nbsp;&middot;&nbsp;
+            <a href="https://github.com/rdmilly">GitHub</a>
+            &nbsp;&middot;&nbsp;
+            <a href="https://www.tiktok.com/@adventuresofshanghaii">Adventures of Shanghai</a>
+        </p>
+    </footer>
+
+</main>
+
+</body>
+</html>

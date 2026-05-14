@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RevenueFirst.AI - AI-powered sales automation for service businesses. Stop leaving money on the table. Book your free consultation today.">
+  <title>RevenueFirst.AI | AI Sales Automation for Service Businesses</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #1e3a5f;
+      --color-primary-light: #2d4a6f;
+      --color-primary-dark: #152a47;
+      --color-accent: #c41e3a;
+      --color-accent-light: #dc3545;
+      --color-accent-dark: #a01830;
+      --color-bg: #ffffff;
+      --color-bg-warm: #fafafa;
+      --color-bg-subtle: #f5f7fa;
+      --color-surface: #ffffff;
+      --color-border: #e5e7eb;
+      --color-border-light: #f0f0f0;
+      --color-text: #1a1a2e;
+      --color-text-secondary: #4a5568;
+      --color-text-muted: #718096;
+      --color-success: #059669;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--color-border-light);
+      background: var(--color-bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner { display: flex; align-items: center; justify-content: space-between; }
+    .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-mark {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 600; color: white;
+    }
+    .logo-text { font-family: var(--font-body); font-size: 22px; font-weight: 700; color: var(--color-primary); letter-spacing: -0.02em; }
+    .logo-text span { color: var(--color-accent); }
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a { color: var(--color-text-secondary); text-decoration: none; font-size: 15px; font-weight: 500; transition: color 0.2s; }
+    nav a:hover { color: var(--color-primary); }
+    .header-cta {
+      padding: 12px 24px;
+      background: var(--color-accent);
+      color: white;
+      border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .header-cta:hover { background: var(--color-accent-dark); transform: translateY(-1px); }
+
+    /* Hero */
+    .hero {
+      padding: 80px 0 100px;
+      background: linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-subtle) 100%);
+    }
+    .hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(38px, 5vw, 56px);
+      font-weight: 600; line-height: 1.15;
+      color: var(--color-primary);
+      margin-bottom: 24px;
+    }
+    .hero h1 em { font-style: normal; color: var(--color-accent); }
+    .hero-subtitle { font-size: 18px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 32px; }
+    .hero-ctas { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 16px 32px;
+      background: var(--color-accent);
+      color: white;
+      border: none; border-radius: 6px;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: var(--color-accent-dark); transform: translateY(-2px); }
+    .btn-secondary {
+      padding: 16px 32px;
+      background: transparent;
+      color: var(--color-primary);
+      border: 2px solid var(--color-primary);
+      border-radius: 6px;
+      font-size: 16px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .btn-secondary:hover { background: var(--color-primary); color: white; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 18px 36px;
+      background: white;
+      color: var(--color-primary);
+      border: none; border-radius: 8px;
+      font-size: 18px; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .cta-btn:hover { background: var(--color-bg-warm); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+    .hero-trust { margin-top: 32px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .hero-trust-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--color-text-muted); }
+    .hero-trust-item svg { color: var(--color-success); }
+    .hero-image { position: relative; border-radius: 16px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); }
+    .hero-image img { width: 100%; height: 400px; object-fit: cover; }
+    .hero-image-overlay {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 24px;
+      background: linear-gradient(transparent, rgba(30,58,95,0.9));
+      color: white;
+    }
+
+    /* Stats Bar */
+    .stats-bar { padding: 48px 0; background: var(--color-primary); }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; text-align: center; }
+    .stat-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .stat-value { font-family: var(--font-display); font-size: 42px; font-weight: 600; color: white; }
+    .stat-label { font-size: 14px; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Industries */
+    .industries { padding: 48px 0; background: var(--color-bg-warm); border-bottom: 1px solid var(--color-border-light); }
+    .industries-label { text-align: center; font-size: 14px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 24px; }
+    .industries-grid { display: flex; justify-content: center; flex-wrap: wrap; gap: 32px; }
+    .industry-item { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 500; color: var(--color-text-secondary); }
+
+    /* Section Styles */
+    .section { padding: 100px 0; }
+    .section-header { text-align: center; max-width: 700px; margin: 0 auto 60px; }
+    .section-label { display: inline-block; font-size: 13px; font-weight: 600; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .section-header h2 { font-family: var(--font-display); font-size: clamp(32px, 4vw, 44px); font-weight: 600; color: var(--color-primary); line-height: 1.2; margin-bottom: 20px; }
+    .section-header p { font-size: 18px; color: var(--color-text-secondary); line-height: 1.7; }
+
+    /* Problems */
+    .problems { background: var(--color-bg); }
+    .problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .problem-card { background: var(--color-bg-warm); border: 1px solid var(--color-border); border-radius: 12px; overflow: hidden; transition: all 0.3s; }
+    .problem-card:hover { border-color: var(--color-primary); box-shadow: 0 12px 40px rgba(30,58,95,0.1); transform: translateY(-4px); }
+    .problem-card-image { height: 180px; overflow: hidden; }
+    .problem-card-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+    .problem-card:hover .problem-card-image img { transform: scale(1.05); }
+    .problem-card-content { padding: 28px; }
+    .problem-card h3 { font-family: var(--font-display); font-size: 22px; font-weight: 600; color: var(--color-primary); margin-bottom: 12px; }
+    .problem-card p { color: var(--color-text-secondary); font-size: 15px; line-height: 1.7; }
+
+    /* How It Works */
+    .how-it-works { background: var(--color-bg-subtle); }
+    .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    .process-step { text-align: center; position: relative; }
+    .process-step::after {
+      content: '→';
+      position: absolute;
+      right: -20px; top: 40px;
+      font-size: 24px;
+      color: var(--color-accent);
+    }
+    .process-step:last-child::after { display: none; }
+    .process-number {
+      width: 64px; height: 64px;
+      background: var(--color-accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 28px; font-weight: 600; color: white;
+      margin: 0 auto 20px;
+    }
+    .process-step h4 { font-size: 18px; font-weight: 600; color: var(--color-primary); margin-bottom: 8px; }
+    .process-step p { font-size: 14px; color: var(--color-text-secondary); line-height: 1.6; }
+
+    /* Features */
+    .features { background: var(--color-bg-warm); }
+    .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; max-width: 1000px; margin: 0 auto; }
+    .feature-card {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 32px;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+    .feature-card:hover { border-color: var(--color-accent); box-shadow: 0 8px 30px rgba(196,30,58,0.08); transform: translateY(-2px); }
+    .feature-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 24px;
+    }
+    .feature-content h4 { font-size: 18px; font-weight: 600; color: var(--color-primary); margin-bottom: 8px; }
+    .feature-content p { color: var(--color-text-secondary); font-size: 15px; line-height: 1.6; }
+
+    /* Pricing */
+    .pricing { background: var(--color-bg); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; max-width: 1100px; margin: 0 auto; }
+    .pricing-card {
+      background: var(--color-surface);
+      border: 2px solid var(--color-border);
+      border-radius: 16px;
+      padding: 40px 32px;
+      text-align: center;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .pricing-card.featured {
+      border-color: var(--color-accent);
+      transform: scale(1.05);
+      box-shadow: 0 20px 50px rgba(196,30,58,0.15);
+    }
+    .pricing-card.featured::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -14px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-accent);
+      color: white;
+      padding: 6px 20px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .pricing-card:hover { border-color: var(--color-accent); }
+    .pricing-name { font-size: 14px; font-weight: 600; color: var(--color-accent); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+    .pricing-price { font-family: var(--font-display); font-size: 48px; font-weight: 600; color: var(--color-primary); margin-bottom: 4px; }
+    .pricing-price span { font-size: 18px; font-weight: 400; color: var(--color-text-muted); }
+    .pricing-desc { font-size: 14px; color: var(--color-text-muted); margin-bottom: 24px; }
+    .pricing-features { list-style: none; text-align: left; margin-bottom: 32px; }
+    .pricing-features li { padding: 12px 0; border-bottom: 1px solid var(--color-border-light); font-size: 15px; color: var(--color-text); display: flex; align-items: center; gap: 12px; }
+    .pricing-features li:last-child { border-bottom: none; }
+    .pricing-features li::before { content: '✓'; color: var(--color-success); font-weight: 700; }
+    .pricing-cta { width: 100%; padding: 16px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; display: block; }
+    .pricing-card.featured .pricing-cta { background: var(--color-accent); color: white; border: none; }
+    .pricing-card.featured .pricing-cta:hover { background: var(--color-accent-dark); }
+    .pricing-card:not(.featured) .pricing-cta { background: transparent; color: var(--color-primary); border: 2px solid var(--color-primary); }
+    .pricing-card:not(.featured) .pricing-cta:hover { background: var(--color-primary); color: white; }
+
+    /* Founder */
+    .founder { background: var(--color-bg); }
+    .founder-card {
+      display: grid; grid-template-columns: 280px 1fr; gap: 60px;
+      padding: 60px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+      border-radius: 20px;
+      align-items: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      color: white;
+    }
+    .founder-image { width: 280px; height: 280px; border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.3); margin: 0 auto; }
+    .founder-image img { width: 100%; height: 100%; object-fit: cover; }
+    .founder-content h3 { font-family: var(--font-display); font-size: 36px; font-weight: 600; margin-bottom: 8px; }
+    .founder-title { color: rgba(255,255,255,0.8); font-size: 15px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 24px; }
+    .founder-content p { color: rgba(255,255,255,0.9); font-size: 17px; line-height: 1.8; }
+    .founder-content p strong { color: white; }
+    .founder-highlight {
+      display: inline-block; margin-top: 28px; padding: 20px 28px;
+      background: rgba(255,255,255,0.15);
+      border-left: 4px solid var(--color-accent);
+      font-weight: 500; font-size: 16px; font-style: italic;
+      border-radius: 0 8px 8px 0;
+    }
+
+    /* Testimonials */
+    .testimonials { background: var(--color-bg-warm); }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+    .testimonial-card { padding: 32px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px; }
+    .testimonial-stars { color: #f59e0b; font-size: 18px; margin-bottom: 16px; }
+    .testimonial-text { font-size: 16px; color: var(--color-text); line-height: 1.7; margin-bottom: 24px; font-style: italic; }
+    .testimonial-author { display: flex; align-items: center; gap: 16px; }
+    .testimonial-avatar { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+    .testimonial-info h5 { font-size: 15px; font-weight: 600; color: var(--color-primary); }
+    .testimonial-info p { font-size: 13px; color: var(--color-text-muted); }
+
+    /* CTA */
+    .cta-section { padding: 100px 0; background: var(--color-primary); text-align: center; position: relative; overflow: hidden; }
+    .cta-section::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80') center/cover;
+      opacity: 0.1;
+    }
+    .cta-content { max-width: 700px; margin: 0 auto; position: relative; z-index: 1; }
+    .cta-content h2 { font-family: var(--font-display); font-size: clamp(32px, 4vw, 48px); font-weight: 600; color: white; margin-bottom: 16px; }
+    .cta-content > p { color: rgba(255,255,255,0.85); font-size: 18px; margin-bottom: 40px; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .cta-buttons .btn-primary { background: white; color: var(--color-primary); }
+    .cta-buttons .btn-primary:hover { background: var(--color-bg-warm); }
+    .cta-contact { margin-top: 32px; color: rgba(255,255,255,0.8); font-size: 15px; }
+    .cta-contact a { color: white; text-decoration: underline; }
+    .cta-note { margin-top: 20px; color: rgba(255,255,255,0.7); font-size: 14px; }
+
+    /* Footer */
+    footer { padding: 60px 0 40px; background: var(--color-primary-dark); }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+    .footer-brand .logo-text { color: white; font-size: 20px; margin-bottom: 16px; }
+    .footer-brand .logo-text span { color: var(--color-accent-light); }
+    .footer-brand p { color: rgba(255,255,255,0.7); font-size: 14px; line-height: 1.7; max-width: 280px; }
+    .footer-column h5 { color: white; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 20px; }
+    .footer-column a { display: block; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 14px; margin-bottom: 12px; transition: color 0.2s; }
+    .footer-column a:hover { color: white; }
+    .footer-bottom { padding-top: 32px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .footer-copy { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .footer-sister { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .footer-sister a { color: rgba(255,255,255,0.7); text-decoration: none; }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .hero-grid, .founder-card { grid-template-columns: 1fr; }
+      .problem-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+      .process-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-step::after { display: none; }
+      .pricing-card.featured { transform: none; }
+      .founder-card { text-align: center; padding: 40px; gap: 32px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .features-grid, .process-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      nav { display: none; }
+      .hero { padding: 60px 0 80px; }
+      .hero-ctas { flex-direction: column; }
+      .footer-grid { grid-template-columns: 1fr; text-align: center; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-inner">
+        <a href="/" class="logo">
+          <div class="logo-mark">R</div>
+          <div class="logo-text">Revenue<span>First</span>.AI</div>
+        </a>
+        <nav>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#features">Features</a>
+          <a href="#pricing">Pricing</a>
+          <a href="#about">About</a>
+        </nav>
+        <a href="#book-call" class="header-cta">Book Free Consultation</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container">
+        <div class="hero-grid">
+          <div class="hero-content">
+            <h1>Stop Leaving <em>Revenue</em> on the Table</h1>
+            <p class="hero-subtitle">
+              AI-powered sales automation built specifically for service businesses. 
+              Turn every lead into a customer, every customer into a referral—on autopilot.
+            </p>
+            <div class="hero-ctas">
+              <a href="#book-call" class="btn-primary">
+                Book Free Consultation
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </a>
+              <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+            </div>
+            <div class="hero-trust">
+              <div class="hero-trust-item">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm3.5 6.5l-4 4a.5.5 0 01-.7 0l-2-2a.5.5 0 11.7-.7L7 9.3l3.6-3.6a.5.5 0 11.7.7z"/></svg>
+                Done-for-you setup
+              </div>
+              <div class="hero-trust-item">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm3.5 6.5l-4 4a.5.5 0 01-.7 0l-2-2a.5.5 0 11.7-.7L7 9.3l3.6-3.6a.5.5 0 11.7.7z"/></svg>
+                Results in 30 days
+              </div>
+              <div class="hero-trust-item">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a8 8 0 100 16A8 8 0 008 0zm3.5 6.5l-4 4a.5.5 0 01-.7 0l-2-2a.5.5 0 11.7-.7L7 9.3l3.6-3.6a.5.5 0 11.7.7z"/></svg>
+                No long-term contracts
+              </div>
+            </div>
+          </div>
+          <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=800&h=600&fit=crop" alt="Service business owner reviewing analytics dashboard">
+            <div class="hero-image-overlay">
+              <p><strong>200+ service businesses</strong> trust RevenueFirst to capture more leads</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-bar">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-value">78%</span>
+            <span class="stat-label">Leads Go to First Responder</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">< 60s</span>
+            <span class="stat-label">Average Response Time</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">3.2×</span>
+            <span class="stat-label">More Bookings</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">$47K</span>
+            <span class="stat-label">Avg. Revenue Recovered</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="industries">
+      <div class="container">
+        <p class="industries-label">Trusted by Service Businesses Across Industries</p>
+        <div class="industries-grid">
+          <span class="industry-item">🔧 HVAC</span>
+          <span class="industry-item">🏠 Home Services</span>
+          <span class="industry-item">⚡ Electricians</span>
+          <span class="industry-item">🚚 Moving Companies</span>
+          <span class="industry-item">🔨 Contractors</span>
+          <span class="industry-item">🧹 Cleaning Services</span>
+          <span class="industry-item">🌳 Landscaping</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="section problems" id="problems">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">The Problem</span>
+          <h2>Service Businesses Are Bleeding Revenue</h2>
+          <p>You're great at what you do. But while you're doing it, leads are slipping through the cracks.</p>
+        </div>
+        <div class="problem-grid">
+          <div class="problem-card">
+            <div class="problem-card-image">
+              <img src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=600&h=400&fit=crop" alt="Missed phone calls">
+            </div>
+            <div class="problem-card-content">
+              <h3>Leads Fall Through Cracks</h3>
+              <p>Service businesses lose 40-60% of leads to slow response times. By the time you call back, they've already hired someone else.</p>
+            </div>
+          </div>
+          <div class="problem-card">
+            <div class="problem-card-image">
+              <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&h=400&fit=crop" alt="Busy contractor working">
+            </div>
+            <div class="problem-card-content">
+              <h3>You're Too Busy Working</h3>
+              <p>You're on job sites, managing crews, handling emergencies. Sales and follow-up always get pushed to "later." Later becomes never.</p>
+            </div>
+          </div>
+          <div class="problem-card">
+            <div class="problem-card-image">
+              <img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&h=400&fit=crop" alt="Messy desk with notes">
+            </div>
+            <div class="problem-card-content">
+              <h3>No System, Just Chaos</h3>
+              <p>Sticky notes, random texts, emails buried in your inbox. Your sales "process" is whatever you remember when you have a free minute.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section how-it-works" id="how-it-works">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">How It Works</span>
+          <h2>From Setup to Revenue in 4 Simple Steps</h2>
+          <p>We handle everything. You focus on running your business.</p>
+        </div>
+        <div class="process-grid">
+          <div class="process-step">
+            <div class="process-number">1</div>
+            <h4>Discovery Call</h4>
+            <p>30-minute call to understand your business, current challenges, and revenue goals.</p>
+          </div>
+          <div class="process-step">
+            <div class="process-number">2</div>
+            <h4>Custom Build</h4>
+            <p>We build your complete AI sales system—scripts, automations, integrations—tailored to your business.</p>
+          </div>
+          <div class="process-step">
+            <div class="process-number">3</div>
+            <h4>Launch & Train</h4>
+            <p>We launch your system, train your team, and ensure everything runs smoothly from day one.</p>
+          </div>
+          <div class="process-step">
+            <div class="process-number">4</div>
+            <h4>Optimize & Scale</h4>
+            <p>Ongoing optimization based on real data. We continuously improve your results.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section features" id="features">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Features</span>
+          <h2>Everything You Need to Capture Every Lead</h2>
+          <p>Powerful automation that works around the clock so you don't have to.</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-content">
+              <h4>Instant Lead Response</h4>
+              <p>AI responds to inquiries within 60 seconds—via text, email, or voice—24/7, even when you're on a job site.</p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <div class="feature-content">
+              <h4>Smart Follow-Up Sequences</h4>
+              <p>Automated, personalized follow-ups that nurture leads until they're ready to book. No more forgetting to call back.</p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⭐</div>
+            <div class="feature-content">
+              <h4>Reputation Automation</h4>
+              <p>Automatically request reviews from happy customers and route unhappy ones to you first—before they go public.</p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <div class="feature-content">
+              <h4>Referral Engine</h4>
+              <p>Turn satisfied customers into your best salespeople with automated referral requests and tracking.</p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <div class="feature-content">
+              <h4>Revenue Dashboard</h4>
+              <p>See exactly how much money you're making (and saving) with real-time analytics and ROI tracking.</p>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🛠️</div>
+            <div class="feature-content">
+              <h4>Done-For-You Setup</h4>
+              <p>We don't just give you software—we build the system for you. Configured, tested, and optimized for your specific business.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section pricing" id="pricing">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Pricing</span>
+          <h2>Simple, Transparent Pricing</h2>
+          <p>No hidden fees. No long-term contracts. Cancel anytime.</p>
+        </div>
+        <div class="pricing-grid">
+          <div class="pricing-card">
+            <p class="pricing-name">Starter</p>
+            <p class="pricing-price">$497<span>/mo</span></p>
+            <p class="pricing-desc">Perfect for solo operators</p>
+            <ul class="pricing-features">
+              <li>Instant lead response (SMS + Email)</li>
+              <li>5-step follow-up sequence</li>
+              <li>Basic review requests</li>
+              <li>Up to 100 leads/month</li>
+              <li>Email support</li>
+            </ul>
+            <a href="#book-call" class="pricing-cta">Get Started</a>
+          </div>
+          <div class="pricing-card featured">
+            <p class="pricing-name">Growth</p>
+            <p class="pricing-price">$997<span>/mo</span></p>
+            <p class="pricing-desc">Most popular for growing businesses</p>
+            <ul class="pricing-features">
+              <li>Everything in Starter, plus:</li>
+              <li>AI voice response</li>
+              <li>10-step nurture sequences</li>
+              <li>Referral automation</li>
+              <li>Up to 500 leads/month</li>
+              <li>Priority support + Slack channel</li>
+              <li>Monthly strategy call</li>
+            </ul>
+            <a href="#book-call" class="pricing-cta">Get Started</a>
+          </div>
+          <div class="pricing-card">
+            <p class="pricing-name">Scale</p>
+            <p class="pricing-price">$1,997<span>/mo</span></p>
+            <p class="pricing-desc">For teams ready to dominate</p>
+            <ul class="pricing-features">
+              <li>Everything in Growth, plus:</li>
+              <li>Unlimited leads</li>
+              <li>Multi-location support</li>
+              <li>Custom integrations</li>
+              <li>Dedicated account manager</li>
+              <li>Weekly optimization calls</li>
+              <li>White-glove onboarding</li>
+            </ul>
+            <a href="#book-call" class="pricing-cta">Get Started</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section founder" id="about">
+      <div class="container">
+        <div class="founder-card">
+          <div class="founder-image">
+            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop" alt="Ryan Miller, Founder">
+          </div>
+          <div class="founder-content">
+            <h3>Ryan Miller</h3>
+            <p class="founder-title">Founder & CEO</p>
+            <p><strong>8 years running a moving company. 10 employees. Thousands of jobs.</strong></p>
+            <p style="margin-top: 16px;">I've been in your shoes—juggling crews, handling complaints, trying to grow while putting out fires. I know exactly how leads slip away when you're too busy actually doing the work.</p>
+            <p style="margin-top: 16px;">RevenueFirst.AI isn't built by consultants who've never held a clipboard. It's built by someone who understands that every missed call is money walking out the door.</p>
+            <div class="founder-highlight">"I built the system I wish I'd had when I was running my company."</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section testimonials">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Results</span>
+          <h2>What Our Clients Are Saying</h2>
+          <p>Real results from real service businesses.</p>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"Within the first month, we closed 12 additional jobs just from faster response times. The ROI was immediate."</p>
+            <div class="testimonial-author">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="Mike Thompson" class="testimonial-avatar">
+              <div class="testimonial-info">
+                <h5>Mike Thompson</h5>
+                <p>Thompson HVAC Services</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"I used to lose half my leads because I couldn't answer the phone on job sites. Now every single one gets an instant response."</p>
+            <div class="testimonial-author">
+              <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=100&h=100&fit=crop" alt="Sarah Chen" class="testimonial-avatar">
+              <div class="testimonial-info">
+                <h5>Sarah Chen</h5>
+                <p>Chen Electric Co.</p>
+              </div>
+            </div>
+          </div>
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"The automated review requests boosted our Google rating from 4.2 to 4.8 in just 3 months. Game changer for referrals."</p>
+            <div class="testimonial-author">
+              <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&h=100&fit=crop" alt="David Rodriguez" class="testimonial-avatar">
+              <div class="testimonial-info">
+                <h5>David Rodriguez</h5>
+                <p>Rodriguez Plumbing</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta" id="book-call">
+      <div class="container">
+        <div class="cta-content">
+          <h2>Ready to Stop Losing Leads?</h2>
+          <p>Book a free 30-minute consultation. We'll show you exactly how much revenue you're leaving on the table—and how to capture it.</p>
+          <a href="https://tidycal.com/revenuefirst/free-consultation" class="cta-btn" target="_blank">
+            Schedule Your Free Consultation
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M7 4l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </a>
+          <p class="cta-note">No obligation. No pressure. Just a conversation about your business.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo-text">Revenue<span>First</span>.AI</div>
+          <p>AI-powered sales automation built specifically for service businesses. Never miss another lead.</p>
+        </div>
+        <div class="footer-column">
+          <h5>Product</h5>
+          <a href="#features">Features</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#pricing">Pricing</a>
+        </div>
+        <div class="footer-column">
+          <h5>Company</h5>
+          <a href="#about">About</a>
+          <a href="mailto:hello@revenuefirst.ai">Contact</a>
+        </div>
+        <div class="footer-column">
+          <h5>Connect</h5>
+          <a href="https://linkedin.com/company/revenuefirstai" target="_blank">LinkedIn</a>
+          <a href="https://twitter.com/revenuefirstai" target="_blank">Twitter</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 RevenueFirst.AI. All rights reserved.</p>
+        <p class="footer-sister">A <a href="https://millyweb.com">Millyweb Development</a> company</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.problem-card, .feature-card, .pricing-card, .process-step, .testimonial-card').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(el);
+    });
+
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('header');
+      header.style.boxShadow = window.pageYOffset > 100 ? '0 2px 10px rgba(0,0,0,0.1)' : 'none';
+    });
+  </script>
+</body>
+</html>
