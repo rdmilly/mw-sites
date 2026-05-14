@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HELIX/master</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0c0f;--surface:#111418;--surface2:#1a1f26;--surface3:#222830;
+  --border:rgba(255,255,255,0.07);--border-bright:rgba(255,255,255,0.15);
+  --text:#c8d0db;--text-dim:#5a6472;--text-bright:#e8edf3;
+  --accent:#00d4aa;--accent2:#3b82f6;--warn:#f59e0b;--live:#22c55e;--danger:#ef4444;
+  --mono:'IBM Plex Mono',monospace;--sans:'IBM Plex Sans',sans-serif;
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:13px}
+.header{border-bottom:1px solid var(--border);padding:0 20px;height:48px;display:flex;align-items:center;justify-content:space-between;background:var(--surface)}
+.logo{font-family:var(--mono);font-size:16px;font-weight:600;color:var(--accent);letter-spacing:0.04em}
+.logo span{color:var(--text-dim);font-weight:400}
+.hm{display:flex;gap:12px;align-items:center;font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(34,197,94,.4)}50%{opacity:.6;box-shadow:0 0 0 4px rgba(34,197,94,0)}}
+.hb{color:var(--text)}.dv{color:var(--border-bright)}
+.live-stat{display:flex;align-items:center;gap:5px}
+.stat-val{color:var(--text-bright);font-weight:500}
+.refresh-btn{font-family:var(--mono);font-size:10px;background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);color:var(--accent);border-radius:4px;padding:3px 9px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:4px}
+.refresh-btn.spinning .spin{animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{display:inline-block}
+.top-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--surface);padding:0 20px}
+.top-tab{padding:10px 16px;font-family:var(--mono);font-size:11px;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.05em;user-select:none}
+.top-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.top-tab:hover:not(.active){color:var(--text)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.roadmap-wrap{height:calc(100vh - 89px);display:grid;grid-template-columns:230px 1fr;overflow:hidden}
+.phase-nav{border-right:1px solid var(--border);overflow-y:auto;padding:16px 0;scrollbar-width:thin;scrollbar-color:var(--surface3) transparent;background:var(--surface)}
+.pn-hdr{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;padding:0 16px 10px}
+.pn-item{display:flex;align-items:flex-start;gap:9px;padding:9px 16px;cursor:pointer;border-left:2px solid transparent;transition:all .15s}
+.pn-item:hover{background:rgba(255,255,255,.02)}
+.pn-item.active{border-left-color:var(--accent);background:rgba(0,212,170,.04)}
+.pn-num{width:20px;height:20px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;color:var(--text-dim);flex-shrink:0;font-weight:600}
+.pn-item.active .pn-num{background:var(--accent);color:#0a0c0f;border-color:var(--accent)}
+.pn-body{flex:1}
+.pn-name{font-family:var(--mono);font-size:11px;color:var(--text);font-weight:500;margin-bottom:2px}
+.pn-item.active .pn-name{color:var(--text-bright)}
+.pn-meta{font-family:var(--mono);font-size:10px;color:var(--text-dim)}
+.pn-bar{height:3px;background:var(--surface3);border-radius:2px;margin-top:5px;overflow:hidden}
+.pn-bar-fill{height:100%;border-radius:2px;background:var(--live)}
+.pn-conn{width:2px;height:12px;background:var(--border);margin:0 0 0 27px}
+.phase-detail{overflow-y:auto;padding:20px 24px;scrollbar-width:thin;scrollbar-color:var(--surface3) transparent}
+.last-session-strip{background:rgba(59,130,246,.05);border:1px solid rgba(59,130,246,.15);border-radius:8px;padding:11px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:10px}
+.ls-icon{font-family:var(--mono);font-size:10px;color:var(--accent2);background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:4px;padding:2px 7px;flex-shrink:0;margin-top:1px}
+.ls-body{flex:1}
+.ls-date{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:3px}
+.ls-items{font-family:var(--mono);font-size:11px;color:var(--text);line-height:1.8}
+.now-banner{background:rgba(245,158,11,.05);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:flex-start;gap:12px}
+.now-icon{font-family:var(--mono);font-size:10px;color:var(--warn);background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);border-radius:4px;padding:2px 8px;flex-shrink:0;margin-top:1px}
+.now-body{flex:1}
+.now-title{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text-bright);margin-bottom:4px}
+.now-sub{font-family:var(--mono);font-size:11px;color:var(--text-dim);line-height:1.6}
+.now-block{display:inline-flex;font-family:var(--mono);font-size:10px;color:var(--danger);background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:4px;padding:2px 8px;margin-top:5px}
+.phase-hdr{margin-bottom:16px}
+.phase-num-lbl{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.phase-title{font-family:var(--mono);font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:5px}
+.phase-desc{font-family:var(--sans);font-size:13px;color:var(--text);line-height:1.7;max-width:620px}
+.phase-prog{display:flex;align-items:center;gap:10px;margin-top:8px;font-family:var(--mono);font-size:11px;color:var(--text-dim)}
+.ph-bar{flex:1;max-width:160px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden}
+.ph-bar-fill{height:100%;border-radius:2px;background:var(--live)}
+.flt-bar{display:flex;gap:7px;margin-bottom:16px}
+.flt-btn{font-family:var(--mono);font-size:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);border-radius:5px;padding:4px 11px;cursor:pointer;transition:all .15s}
+.flt-btn.active{background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.25);color:var(--accent)}
+.task-row{display:grid;grid-template-columns:24px 1fr auto auto;gap:10px;align-items:start;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:5px;cursor:pointer;transition:border-color .15s}
+.task-row:hover{border-color:var(--border-bright)}
+.task-row.now-t{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.02)}
+.task-row.block-t{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.02)}
+.tr-ic{width:20px;height:20px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:var(--mono);flex-shrink:0;margin-top:2px}
+.ti-done{background:rgba(34,197,94,.12);color:var(--live)}
+.ti-block{background:rgba(239,68,68,.1);color:var(--danger)}
+.ti-next{background:rgba(59,130,246,.1);color:var(--accent2)}
+.ti-plan{background:rgba(255,255,255,.04);color:var(--text-dim)}
+.tr-name{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text-bright)}
+.tr-note{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:2px;line-height:1.5}
+.tr-comp{font-family:var(--mono);font-size:10px;color:var(--text-dim);padding-top:3px;white-space:nowrap}
+.bdg{font-family:var(--mono);font-size:10px;border-radius:4px;padding:2px 7px;white-space:nowrap;margin-top:2px}
+.b-done{background:rgba(34,197,94,.1);color:var(--live)}
+.b-block{background:rgba(239,68,68,.1);color:var(--danger)}
+.b-next{background:rgba(59,130,246,.1);color:var(--accent2)}
+.b-plan{background:rgba(255,255,255,.04);color:var(--text-dim)}
+.comp-wrap{height:calc(100vh - 89px);display:grid;grid-template-columns:1fr 370px;overflow:hidden}
+.comp-main{overflow-y:auto;padding:18px 22px;scrollbar-width:thin;scrollbar-color:var(--surface3) transparent}
+.comp-sb{border-left:1px solid var(--border);display:flex;flex-direction:column;background:var(--surface);overflow:hidden}
+.comp-sb-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;color:var(--text-dim);font-family:var(--mono);font-size:11px;text-align:center;line-height:1.8}
+.comp-sb-body{flex:1;overflow-y:auto;scrollbar-width:thin}
+.layer-pills{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.lpill{font-family:var(--mono);font-size:10px;border-radius:12px;padding:3px 11px;cursor:pointer;border:1px solid var(--border);color:var(--text-dim);transition:all .15s;user-select:none}
+.lpill:hover{border-color:var(--border-bright);color:var(--text)}
+.lpill.active{border-color:rgba(0,212,170,.4);background:rgba(0,212,170,.06);color:var(--accent)}
+.layer-group{margin-bottom:10px;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.layer-header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);cursor:pointer;user-select:none}
+.layer-arrow{font-family:var(--mono);font-size:11px;color:var(--text-dim);transition:transform .2s;width:14px;text-align:center}
+.layer-arrow.cl{transform:rotate(-90deg)}
+.layer-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.s-live{background:var(--live)}.s-partial{background:var(--warn)}.s-planned{background:var(--text-dim)}
+.layer-name{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text-bright);flex:1}
+.layer-tag{font-family:var(--mono);font-size:10px;color:var(--text-dim);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:4px;padding:2px 7px}
+.layer-count{font-family:var(--mono);font-size:10px;color:var(--text-dim)}
+.layer-body{display:none;border-top:1px solid var(--border)}
+.layer-body.open{display:block}
+.comp-row{display:flex;align-items:center;gap:8px;padding:6px 14px 6px 26px;cursor:pointer;transition:background .1s;border-left:2px solid transparent}
+.comp-row:hover{background:rgba(255,255,255,.02)}
+.comp-row.active{border-left-color:var(--accent);background:rgba(0,212,170,.04)}
+.cr-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cr-name{font-family:var(--mono);font-size:11px;color:var(--text);flex:1}
+.cr-file{font-family:var(--mono);font-size:10px;color:var(--text-dim);opacity:.6;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cr-status{font-family:var(--mono);font-size:10px;border-radius:3px;padding:1px 5px;flex-shrink:0}
+.cs-live{background:rgba(34,197,94,.1);color:var(--live)}
+.cs-partial{background:rgba(245,158,11,.08);color:var(--warn)}
+.cs-planned{background:rgba(255,255,255,.04);color:var(--text-dim)}
+.sbh{padding:14px 16px 0;border-bottom:1px solid var(--border);flex-shrink:0}
+.sb-lbl{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.sb-title{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:2px}
+.sb-layer{font-family:var(--mono);font-size:10px;color:var(--accent);margin-bottom:9px}
+.sb-tabs{display:flex}
+.sbt{padding:7px 12px;font-family:var(--mono);font-size:10px;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.sbt.active{color:var(--accent);border-bottom-color:var(--accent)}
+.sbt:hover:not(.active){color:var(--text)}
+.ds{padding:12px 16px;border-bottom:1px solid var(--border)}
+.ds-lbl{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;margin-bottom:3px}
+.ir-k{font-family:var(--mono);font-size:10px;color:var(--text-dim)}
+.ir-v{font-family:var(--mono);font-size:10px;color:var(--text)}
+.ep-item{font-family:var(--mono);font-size:11px;color:var(--text-dim);padding:4px 0;border-bottom:1px solid var(--border);line-height:1.5}
+.ep-item:last-child{border-bottom:none}
+.ep-item code{color:var(--accent2);font-size:10px}
+.btn-row{display:flex;gap:7px;padding:10px 16px;border-top:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
+.bp{font-family:var(--mono);font-size:10px;background:rgba(0,212,170,.08);border:1px solid rgba(0,212,170,.25);color:var(--accent);border-radius:5px;padding:5px 11px;cursor:pointer;transition:all .15s}
+.bp:hover{background:rgba(0,212,170,.14)}
+.bg{font-family:var(--mono);font-size:10px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:5px;padding:5px 11px;cursor:pointer;transition:all .15s}
+.bg:hover{border-color:var(--border-bright);color:var(--text)}
+.bg.hl{border-color:rgba(0,212,170,.3);color:var(--accent)}
+.lp{padding:20px 24px;overflow-y:auto;height:calc(100vh - 89px);scrollbar-width:thin;scrollbar-color:var(--surface3) transparent}
+.qi{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:8px;transition:border-color .15s}
+.qi.resolved{opacity:.45;border-style:dashed}
+.qi-top{display:flex;gap:10px;align-items:flex-start}
+.qic{font-family:var(--mono);font-size:13px;flex-shrink:0;line-height:1}
+.qt{font-family:var(--mono);font-size:11px;color:var(--text);line-height:1.6;flex:1}
+.qp{font-family:var(--mono);font-size:10px;color:var(--accent2);margin-top:3px}
+.q-actions{display:flex;gap:6px;margin-top:9px;padding-top:9px;border-top:1px solid var(--border)}
+.qa-btn{font-family:var(--mono);font-size:10px;border-radius:4px;padding:3px 9px;cursor:pointer;border:1px solid var(--border);color:var(--text-dim);background:transparent;transition:all .15s}
+.qa-btn.qa-resolved{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.2);color:var(--live)}
+.qa-btn.qa-adr{background:rgba(59,130,246,.08);border-color:rgba(59,130,246,.2);color:var(--accent2)}
+.qa-btn.qa-answered{background:rgba(0,212,170,.08);border-color:rgba(0,212,170,.2);color:var(--accent)}
+.q-add-wrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:16px}
+.q-add-lbl{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.q-add-row{display:flex;gap:8px;margin-bottom:6px}
+.q-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:var(--mono);font-size:11px;color:var(--text-bright);outline:none;transition:border-color .15s}
+.q-input:focus{border-color:rgba(0,212,170,.3)}
+.q-input::placeholder{color:var(--text-dim)}
+.q-proj-input{width:160px;background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:7px 10px;font-family:var(--mono);font-size:11px;color:var(--text-bright);outline:none}
+.q-proj-input::placeholder{color:var(--text-dim)}
+.g-lbl{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin:16px 0 10px;display:flex;align-items:center;gap:10px}
+.g-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+.ac{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:7px}
+.ac-h{display:flex;gap:10px;align-items:flex-start;margin-bottom:5px}
+.ac-id{font-family:var(--mono);font-size:11px;color:var(--accent2);flex-shrink:0}
+.ac-t{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text-bright);flex:1}
+.ac-m{font-family:var(--mono);font-size:10px;color:var(--text-dim)}
+.badge{font-family:var(--mono);font-size:10px;border-radius:4px;padding:2px 7px;flex-shrink:0}
+.b-h{background:rgba(34,197,94,.1);color:var(--live)}
+.b-d{background:rgba(59,130,246,.1);color:var(--accent2)}
+.b-p{background:rgba(255,255,255,.04);color:var(--text-dim)}
+.journal-wrap{height:calc(100vh - 89px);display:grid;grid-template-columns:1fr 300px;overflow:hidden}
+.j-list{overflow-y:auto;padding:20px 24px;scrollbar-width:thin}
+.j-schema{overflow-y:auto;padding:18px;background:var(--surface);border-left:1px solid var(--border);scrollbar-width:thin}
+.je{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.06);border-left:2px solid var(--border);padding:0 0 24px 18px;position:relative}
+.je::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--surface2);border:2px solid var(--border-bright);position:absolute;left:-5px;top:2px}
+.jd{font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-bottom:4px}
+.jt{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text-bright);margin-bottom:7px}
+.jb{font-family:var(--sans);font-size:12px;color:var(--text);line-height:1.75;margin-bottom:11px}
+.j-sec-lbl{margin-top:16px;font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+.dec-row{margin-bottom:5px;display:flex;align-items:center;gap:7px;padding:4px 9px;background:var(--surface);border:1px solid var(--border);border-radius:5px;margin-bottom:3px}
+.dec-bdg{display:inline-block;padding:1px 7px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-right:8px;flex-shrink:0;font-family:var(--mono);font-size:10px;border-radius:3px;padding:1px 6px;flex-shrink:0}
+.db-live{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.25)}.db-feat{background:rgba(99,102,241,.12);color:#818cf8;border:1px solid rgba(99,102,241,.25)}.db-arch{background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.25)}.db-fix{background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.25)}.db-infra{background:rgba(20,184,166,.12);color:#2dd4bf;border:1px solid rgba(20,184,166,.25)}.db-rule{background:rgba(168,85,247,.12);color:#c084fc;border:1px solid rgba(168,85,247,.25)}.db-plan{background:rgba(59,130,246,.08);color:var(--accent2)}.db-block{background:rgba(239,68,68,.08);color:var(--danger)}.db-next{background:rgba(245,158,11,.08);color:var(--warn)}
+.dec-txt{font-family:var(--mono);font-size:11px;color:var(--text)}
+.glance{margin-top:18px;background:rgba(245,158,11,.04);border-left:3px solid var(--warn);padding:9px 13px;border-radius:0 6px 6px 0;margin-bottom:11px}
+.g-lbl2{font-family:var(--mono);font-size:10px;color:var(--warn);margin-bottom:3px}
+.jtags{display:flex;gap:5px;flex-wrap:wrap}
+.jtag{font-family:var(--mono);font-size:10px;color:var(--text-dim);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:2px 7px}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border-bright);border-radius:12px;width:640px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-hdr{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text-bright)}
+.modal-close{font-family:var(--mono);font-size:16px;color:var(--text-dim);cursor:pointer;background:none;border:none;line-height:1}
+.modal-body{flex:1;overflow-y:auto;padding:16px 20px}
+.modal-field-lbl{font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;margin-top:14px}
+.modal-field-lbl:first-child{margin-top:0}
+.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--mono);font-size:12px;color:var(--text-bright);outline:none;transition:border-color .15s}
+.modal-input:focus{border-color:rgba(0,212,170,.3)}
+.modal-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;font-family:var(--sans);font-size:12px;color:var(--text-bright);outline:none;resize:vertical;min-height:120px;line-height:1.7;transition:border-color .15s}
+.modal-textarea:focus{border-color:rgba(0,212,170,.3)}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.modal-save{font-family:var(--mono);font-size:11px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);color:var(--accent);border-radius:6px;padding:7px 18px;cursor:pointer}
+.modal-cancel{font-family:var(--mono);font-size:11px;background:transparent;border:1px solid var(--border);color:var(--text-dim);border-radius:6px;padding:7px 18px;cursor:pointer}
+.li-dot{width:5px;height:5px;border-radius:50%;background:var(--live)}
+.li-dot.stale{background:var(--warn)}
+
+.je-type{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:9px;vertical-align:middle}
+.jt-feat{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+.jt-fix{background:rgba(251,146,60,.15);color:#fb923c;border:1px solid rgba(251,146,60,.3)}
+.jt-infra{background:rgba(96,165,250,.15);color:#60a5fa;border:1px solid rgba(96,165,250,.3)}
+.jt-debug{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3)}
+.jt-docs{background:rgba(167,139,250,.15);color:#a78bfa;border:1px solid rgba(167,139,250,.3)}
+.jt-style{background:rgba(244,208,63,.15);color:#f4d03f;border:1px solid rgba(244,208,63,.3)}
+.jt-data{background:rgba(34,211,238,.15);color:#22d3ee;border:1px solid rgba(34,211,238,.3)}
+
+.dec-fix{background:rgba(251,191,36,.12);border-left:3px solid #fbbf24;color:#fbbf24}
+.dec-feat{background:rgba(52,211,153,.12);border-left:3px solid #34d399;color:#34d399}
+.dec-arch{background:rgba(139,92,246,.12);border-left:3px solid #8b5cf6;color:#8b5cf6}
+.dec-kill{background:rgba(239,68,68,.12);border-left:3px solid #ef4444;color:#ef4444}
+.dec-infra{background:rgba(14,165,233,.12);border-left:3px solid #0ea5e9;color:#0ea5e9}
+.dec-docs{background:rgba(156,163,175,.12);border-left:3px solid #9ca3af;color:#9ca3af}
+.dec-live{background:rgba(52,211,153,.08);border-left:3px solid #34d399;color:#34d399}
+</style>
+</head>
+<body>
+<div class="modal-overlay" id="modal"><div class="modal"><div class="modal-hdr"><div class="modal-title" id="modal-title">New document</div><button class="modal-close" onclick="closeModal()">✕</button></div><div class="modal-body"><div class="modal-field-lbl">Title</div><input class="modal-input" id="modal-doc-title" placeholder="e.g. Haiku Enrichment — Deep Spec"><div class="modal-field-lbl">Type</div><select class="modal-input" id="modal-doc-type" style="cursor:pointer"><option value="spec">◈ Spec doc</option><option value="shape">◇ Shape doc</option><option value="note">○ Session note</option><option value="report">▣ Research report</option></select><div class="modal-field-lbl">Content</div><textarea class="modal-textarea" id="modal-doc-body" rows="8" placeholder="Freeform research notes, architecture decisions, trade-off analysis..."></textarea><div class="modal-field-lbl">Linked component (optional)</div><input class="modal-input" id="modal-doc-comp" placeholder="e.g. Haiku service"></div><div class="modal-footer"><button class="modal-cancel" onclick="closeModal()">cancel</button><button class="modal-save" onclick="saveDoc()">save to KB →</button></div></div></div>
+<div class="header"><div class="logo">HELIX<span>/master</span></div><div class="hm"><div class="pulse"></div><div class="live-stat"><span>cortex</span><span class="stat-val" id="stat-cortex">checking...</span></div><span class="dv">|</span><div class="live-stat"><span>chunks</span><span class="stat-val" id="stat-chunks">...</span></div><span class="dv">|</span><div class="live-stat"><span>containers</span><span class="stat-val" id="stat-containers">...</span></div><span class="dv">|</span><div class="live-stat"><span>ADRs</span><span class="stat-val" id="stat-adrs">...</span></div><span class="dv">|</span><div class="live-stat"><div class="li-dot" id="live-dot"></div><span id="live-label">connecting</span></div><button class="refresh-btn" id="refresh-btn" onclick="fetchLiveData()"><span class="spin" id="spin-icon">↻</span> refresh</button></div></div>
+<div class="top-tabs"><div class="top-tab active" onclick="switchTop('roadmap',this)">Roadmap</div><div class="top-tab" onclick="switchTop('components',this)">Components</div><div class="top-tab" onclick="switchTop('adrs',this)">ADRs</div><div class="top-tab" onclick="switchTop('journal',this)">Journal</div><div class="top-tab" onclick="switchTop('questions',this)">Open Questions</div></div>
+<div id="tab-roadmap" class="tab-panel active"><div class="roadmap-wrap"><div class="phase-nav"><div class="pn-hdr">Phases</div><div id="pnav"></div></div><div class="phase-detail" id="pdetail"></div></div></div>
+<div id="tab-components" class="tab-panel"><div class="comp-wrap"><div class="comp-main"><div class="layer-pills" id="layer-pills"></div><div id="layer-list"></div></div><div class="comp-sb" id="comp-sb"><div class="comp-sb-empty"><div style="font-size:28px;opacity:.3">◈</div><div>select a component<br>to view detail</div></div></div></div></div>
+<div id="tab-adrs" class="tab-panel"><div class="lp"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div></div><button class="bp" onclick="openModal('New ADR','adr')">+ new ADR</button></div><div id="adr-list"></div><div style="height:40px"></div></div></div>
+<div id="tab-journal" class="tab-panel"><div class="journal-wrap"><div class="j-list" id="jlist"></div><div class="j-schema"><div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px">Entry schema</div><div style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;font-family:var(--mono);font-size:11px"><div style="padding:6px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between"><span style="color:var(--text-dim)">date + session</span><span style="color:var(--text)">auto</span></div><div style="padding:6px 12px;border-bottom:1px solid var(--border)"><div style="color:var(--text-dim)">body</div><div style="color:var(--text-dim);font-size:10px;margin-top:2px">3-5 sentences, reasoning not just outcome</div></div><div style="padding:6px 12px;border-bottom:1px solid var(--border)"><div style="color:var(--text-dim)">key decisions</div><div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap"><span style="font-size:10px;background:rgba(34,197,94,.1);color:var(--live);border-radius:3px;padding:1px 6px">live</span><span style="font-size:10px;background:rgba(59,130,246,.08);color:var(--accent2);border-radius:3px;padding:1px 6px">planned</span><span style="font-size:10px;background:rgba(239,68,68,.08);color:var(--danger);border-radius:3px;padding:1px 6px">blocking</span></div></div><div style="padding:6px 12px;border-bottom:1px solid var(--border)"><div style="background:rgba(245,158,11,.05);border-left:3px solid var(--warn);padding:5px 8px;border-radius:0 4px 4px 0"><span style="color:var(--warn);font-size:10px">final glance</span><div style="color:var(--text-dim);font-size:10px;margin-top:2px">amber anti-loss callout</div></div></div><div style="padding:6px 12px"><span style="color:var(--text-dim)">tags</span></div></div><div style="margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text-dim);line-height:2">Auto-populated hourly<br>by Haiku reconciler.<br><br><span style="color:var(--accent)">live?</span> badges = scan in 10s.</div></div></div></div>
+<div id="tab-questions" class="tab-panel"><div class="lp"><div class="q-add-wrap"><div class="q-add-lbl">+ add question</div><div class="q-add-row"><input class="q-input" id="q-new-text" placeholder="What needs to be decided?"><input class="q-proj-input" id="q-new-proj" placeholder="component · type"></div><button class="bp" onclick="addQuestion()" style="font-size:10px;padding:5px 12px">add →</button></div><div id="q-list"></div></div></div>
+<script>
+const HELIX_BASE='https://helix.millyweb.com';
+const STATUS_URL=HELIX_BASE+'/api/v1/master/status';
+
+async function fetchLiveData(){
+  const btn=document.getElementById('refresh-btn');
+  btn.classList.add('spinning');
+  try{
+    const res=await fetch(STATUS_URL,{headers:{'Accept':'application/json'}});
+    if(!res.ok) throw new Error(res.status);
+    const d=await res.json();
+    document.getElementById('stat-cortex').textContent=d.cortex_uptime||'up';
+    document.getElementById('stat-chunks').textContent=(d.chunks||0).toLocaleString();
+    document.getElementById('stat-containers').textContent=d.containers||'?';
+    document.getElementById('stat-adrs').textContent=String(typeof d.adr_count==='number'?d.adr_count:(d.counts&&d.counts.decisions)||'?');
+    document.getElementById('live-dot').className='li-dot';
+    document.getElementById('live-label').textContent='live';
+    if(d.last_session) updateLastSession(d.last_session);
+    // Auto-sync task statuses from API
+    if(d.task_statuses) updateTaskStatuses(d.task_statuses);
+    if(d.phases) updatePhases(d.phases);
+    if(d.open_questions) updateQuestions(d.open_questions);
+    if(d.journal) updateJournal(d.journal);
+    if(d.adrs) updateAdrs(d.adrs);
+  }catch(e){
+    document.getElementById('live-dot').className='li-dot stale';
+    document.getElementById('live-label').textContent='offline — using static data';
+    document.getElementById('stat-cortex').textContent='static';
+  }
+  btn.classList.remove('spinning');
+}
+
+function updateLastSession(ls){
+  lastSession.date=ls.date||lastSession.date;
+  lastSession.items=ls.items||lastSession.items;
+  if(activePhase==='p1') renderPDetail();
+}
+function updatePhases(apiPhases){
+  apiPhases.forEach(ap=>{
+    const p=phases.find(x=>x.id===ap.id);
+    if(p){
+      if(ap.done!==undefined) p.done=ap.done;
+      if(ap.tasks) ap.tasks.forEach(at=>{
+        const t=p.tasks.find(x=>x.name===at.name);
+        if(t&&at.status) t.status=at.status;
+      });
+    }
+  });
+  renderPNav(); renderPDetail();
+}
+function updateTaskStatuses(statuses){
+  // Match tasks by name substring and update status
+  statuses.forEach(s=>{
+    phases.forEach(p=>{
+      p.tasks.forEach(t=>{
+        if(t.name.toLowerCase().includes(s.name.toLowerCase().split(' ').slice(0,3).join(' ').toLowerCase())){
+          if(t.status!==s.status){
+            if(s.status==='done'&&t.status!=='done') p.done=Math.min(p.total,p.done+1);
+            if(t.status==='done'&&s.status!=='done') p.done=Math.max(0,p.done-1);
+            t.status=s.status;
+          }
+        }
+      });
+    });
+  });
+  renderPNav(); renderPDetail();
+}
+function updateQuestions(apiQs){
+  apiQs.forEach(aq=>{
+    if(!questions.find(q=>q.text===aq.text)){
+      questions.unshift({id:nextQId++,text:aq.text,proj:aq.proj||'auto',icon:aq.icon||'?',status:'open'});
+    }
+  });
+  renderQuestions();
+}
+function updateJournal(apiJ){
+  if(!apiJ||!apiJ.length)return;
+  // Replace static entries entirely with live data from journal.md, newest first
+  jEntries.length=0;
+  const sorted=[...apiJ].sort((a,b)=>{
+    if(a.date>b.date)return -1;
+    if(a.date<b.date)return 1;
+    return 0;
+  });
+  sorted.forEach(e=>jEntries.push(e));
+  renderJournal();
+  setTimeout(colorJeTitles,50);
+}
+function updateAdrs(apiAdrs){ renderAdrs(apiAdrs); }
+
+const lastSession={date:'2026-03-22',items:['helix-mcp v2.0 deployed — single MCP surface, 33 tools, all proxy to cortex REST','Removed cortex MCP endpoint — cortex is now backend-only, helix-mcp is the only MCP surface','Fixed pg_sync/SQLite bugs in ops.py, archive.py, kb.py, knowledge.py, scheduler.py (plainto_tsquery)','Provisioner manifest updated: 47 servers, helix-workspace renamed helix, cortex entry removed','Next: build /api/v1/master/status endpoint + Observer flush fix']};
+
+const phases=[
+  {id:'p1',num:1,name:'Foundation',done:3,total:4,desc:'Fix the write layer and establish the storage contract. Nothing can be built reliably until writes are stable and versioned.',tasks:[
+    {name:'Verify helix_file_write pipeline end-to-end',comp:'storage',status:'done',dep:null,note:'helix-mcp v2.0 confirmed. All 24 tool groups tested and passing including file_write through cortex REST.'},
+    {name:'Direct MinIO write utility (boto3)',comp:'storage',status:'next',dep:'verify',note:'ADR-001 decided. boto3 client, versioned bucket, used for all 5 permanent docs.'},
+    {name:'5 permanent doc structure in Working KB',comp:'memory',status:'done',dep:'MinIO write',note:'handoff.md, journal.md, open-questions.md, shape-current.md, adrs/'},
+    {name:'helix_file_write smoke test confirmed',comp:'storage',status:'done',dep:null,note:'Pre-Forge-fix baseline confirmed.'},
+  ]},
+  {id:'p2',num:2,name:'Ingestion Automation',done:6,total:8,desc:'Make context capture automatic. Once running, no decision gets lost regardless of session close.',tasks:[
+    {name:'turn_processor + shard diff (per-turn)',comp:'ingestion',status:'done',dep:null,note:'Live. services/shard.py + services/diff.py.'},
+    {name:'Checksum dedup + backfill',comp:'ingestion',status:'done',dep:null,note:'Live.'},
+    {name:'event_bus wired',comp:'runtime',status:'done',dep:null,note:'Live.'},
+    {name:'Conversation ingester cron (5min)',comp:'ingestion',status:'done',dep:'Phase 1',note:'Pure diff — compare checksums, queue new.'},
+    {name:'Haiku reconciler cron (hourly)',comp:'intelligence',status:'done',dep:'ingester cron',note:'Extracts ADRs, tasks, journal entries. Patches 5 permanent docs.'},
+    {name:'Shape stub generator',comp:'intelligence',status:'planned',dep:'Haiku reconciler',note:'Detects topic clusters without shape docs.'},
+    {name:'Signal Intelligence — 15 unused sources audited',comp:'intelligence',status:'planned',dep:'action_intelligence',note:'Tier 1 (highest value): observer_sequences (tool chains), shard_diffs (edit patterns), exchanges.rejected_alternatives (dead ends). Tier 2: conventions, expressions, anomalies, embeddings similarity, KG relationships, KG mentions. Tier 3: observer_file_captures (hotspots), membrain_events (injection acceptance), conversations_fts scanner, observer_session_tokens. None currently wired to promoter.'},
+    {name:'helix-feature-add skill — unified update pipeline',comp:'memory',status:'done',dep:'helix_file_write pipeline',note:'Skill covering all 7 touchpoints when adding any Helix feature: journal + handoff + master site + open-questions + ADR + KB index + git. Stored at /opt/projects/helix/skills/helix-feature-add/SKILL.md. Triggered by: add this to helix, mark as done, update build plan.'}
+  ]},
+  {id:'p3',num:3,name:'Intelligence Chain',done:6,total:6,desc:'Wire language decisions to code decisions. KG becomes traversable map of intent → decision → outcome.',tasks:[
+    {name:'entity_upsert + relationship_create',comp:'KG',status:'done',dep:null,note:'Live.'},
+    {name:'exchange_search',comp:'KG',status:'done',dep:null,note:'Live.'},
+    {name:'intent→ADR→impl chain in KG',comp:'KG',status:'done',dep:'Phase 2',note:'ADR-012. Add chunk_id, code_ref, pattern_id, outcome, recurrence to ADR nodes.'},
+    {name:'ADR folder + reconciler writes ADRs',comp:'memory',status:'done',dep:'Haiku reconciler',note:'projects/[project]/adrs/ADR-[n].md auto-written from conversation.'},
+    {name:'Recurrence + confidence scoring',comp:'KG',status:'done',dep:'ADR chain',note:'High recurrence = scaffold candidate.'},
+    {name:'Journal auto-generated via haiku.py',comp:'intelligence',status:'done',dep:'Haiku reconciler',note:'Session summaries appended automatically.'},
+  ]},
+  {id:'p4',num:4,name:'Gates + Enforcement',done:10,total:11,desc:'Make the process automatic and the site genuinely useful day-to-day.',tasks:[
+    {name:'MemBrain Tier 1 context injection',comp:'membrain',status:'done',dep:null,note:'Live at v0.5.2.'},
+    {name:'session_state gate in handoff.md + MemBrain',comp:'membrain',status:'done',dep:'Phase 2',note:'shape_required | active | closing.'},
+    {name:'Journal wired into MemBrain Tier 1',comp:'membrain',status:'done',dep:'Phase 3 journal',note:'Running journal visible on every message.'},
+    {name:'helixmaster.millyweb.com deployed with auth',comp:'frontend',status:'done',dep:'master-plan.md',note:'Basic auth before serving. Build plan is sensitive.'},
+    {name:'master-plan.md auto-patched by reconciler',comp:'memory',status:'done',dep:'Haiku reconciler',note:'Site auto-reflects cron updates.'},
+    {name:'Build /api/v1/master/status endpoint',comp:'runtime',status:'done',dep:null,note:'Returns JSON: cortex_uptime, chunks, containers, adrs, last_session, phases delta, open_questions, journal, adrs list. This makes the site fully live.'},
+    {name:'Live data pull wired to status endpoint',comp:'frontend',status:'done',dep:'/api/v1/master/status',note:'fetchLiveData() already coded — just needs the endpoint live.'},
+    {name:'Cross-link Components → Roadmap phase',comp:'frontend',status:'done',dep:null,note:'Implemented in v5.'},
+    {name:'Open Questions resolution toggles',comp:'frontend',status:'done',dep:null,note:'Implemented in v5.'},
+    {name:'Inline doc editor',comp:'frontend',status:'done',dep:null,note:'Implemented in v5.'},{name:'Git pipeline all 3 repos',comp:'runtime',status:'done',dep:'helix_file_write',note:'rdmilly/helix + rdmilly/membrain + rdmilly/helixmaster. Auto-commit on every write.'},
+  ]},
+  {id:'p5',num:5,name:'Assembler',done:10,total:10,desc:'The payoff. Pre-stage code and language scaffolds from pattern recognition across prior sessions.',tasks:[
+    {name:'cortex_act interceptor (MemBrain Phase 4)',comp:'membrain',status:'done',dep:'Phase 3+4',note:'SSE stream → detect tool_use → enrich params → release.'},
+    {name:'Phrase promoter → compression symbol promotion',comp:'compression',status:'done',dep:'recurrence scoring',note:'phrase_promoter.py exists.'},
+    {name:'Assembler pre-staging logic',comp:'intelligence',status:'done',dep:'recurrence + confidence',note:'assembler.py exists. Pattern match → scaffold surfaced before ask.'},
+    {name:'Spec/RFC auto-generation from ADR clusters',comp:'intelligence',status:'done',dep:'assembler',note:'3+ ADRs on one topic → haiku.py drafts Spec doc stub.'},{name:'Action Intelligence — outcome tracking + confidence scoring',comp:'intelligence',status:'done',dep:'observer_actions schema',note:'cortex_act logs every tool call with outcome. action_intelligence.py scores patterns. phrase_promoter uses multipliers. ADR-confirmed bypasses threshold. Recovery patterns boosted. Dead-ends penalised.'},
+{name:'action_chains view — failure→success sequences',comp:'intelligence',status:'done',dep:'action_intelligence',note:'SQL view shows what failed before each working fix. Foundation for automated dead-end detection.'},
+{name:'/api/v1/actions/log|signals|chains',comp:'runtime',status:'done',dep:'action_intelligence',note:'Three endpoints. Signals confirms pattern confidence. Chains shows recovery sequences. Log receives cortex_act writes.'},{name:'feature_registry single source of truth',comp:'runtime',status:'done',dep:'observer_actions',note:'38 rows across helix/membrain/helixmaster. deploy_target field. /api/v1/features CRUD.'},{name:'SYSTEM_INDEX.md unified file index',comp:'memory',status:'done',dep:'feature_registry',note:'All key file paths VPS1 VPS2 Postgres GitHub URLs. VPS2 routing documented.'},{name:'sync_vps2 helixmaster auto-deploy',comp:'runtime',status:'done',dep:'file_events',note:'DNS points to VPS2. file_events SCP-syncs index.html to VPS2 on every helix_file_write.'}
+  ]},
+];
+
+let activePhase='p1',activeFilter='all';
+function renderPNav(){const el=document.getElementById('pnav');el.innerHTML='';phases.forEach((p,i)=>{const pct=Math.round(p.done/p.total*100);el.innerHTML+=`<div class="pn-item ${p.id===activePhase?'active':''}" onclick="setPhase('${p.id}')"><div class="pn-num">${p.num}</div><div class="pn-body"><div class="pn-name">${p.name}</div><div class="pn-meta">${p.done}/${p.total} done</div><div class="pn-bar"><div class="pn-bar-fill" style="width:${pct}%"></div></div></div></div>${i<phases.length-1?'<div class="pn-conn"></div>':''}`});}
+function renderPDetail(){const p=phases.find(ph=>ph.id===activePhase);const firstInc=phases.findIndex(ph=>ph.done<ph.total);const isCurrent=phases.indexOf(p)===firstInc;const nowTask=isCurrent&&(p.tasks.find(t=>t.status==='blocking')||p.tasks.find(t=>t.status==='next'));const pct=Math.round(p.done/p.total*100);let html='';if(activePhase==='p1'){html+=`<div class="last-session-strip"><div class="ls-icon">last session</div><div class="ls-body"><div class="ls-date">${lastSession.date}</div><div class="ls-items">${lastSession.items.map(i=>`<div>→ ${i}</div>`).join('')}</div></div></div>`;}if(nowTask){html+=`<div class="now-banner"><div class="now-icon">${nowTask.status==='blocking'?'BLOCKING':'▶ NOW'}</div><div class="now-body"><div class="now-title">${nowTask.name}</div><div class="now-sub">${nowTask.note}</div>${nowTask.status==='blocking'?'<div class="now-block">⚠ blocks everything below</div>':''}</div></div>`;}html+=`<div class="phase-hdr"><div class="phase-num-lbl">Phase ${p.num}</div><div class="phase-title">${p.name}</div><div class="phase-desc">${p.desc}</div><div class="phase-prog"><div class="ph-bar"><div class="ph-bar-fill" style="width:${pct}%"></div></div><span>${p.done}/${p.total} (${pct}%)</span></div></div><div class="flt-bar"><div class="flt-btn ${activeFilter==='all'?'active':''}" onclick="setFlt('all')">all</div><div class="flt-btn ${activeFilter==='todo'?'active':''}" onclick="setFlt('todo')">to do</div><div class="flt-btn ${activeFilter==='done'?'active':''}" onclick="setFlt('done')">done</div></div>`;const sI={done:'✓',blocking:'!',next:'→',planned:'·'};const sC={done:'ti-done',blocking:'ti-block',next:'ti-next',planned:'ti-plan'};const sB={done:'b-done',blocking:'b-block',next:'b-next',planned:'b-plan'};const sL={done:'done',blocking:'BLOCKING',next:'next',planned:'planned'};p.tasks.filter(t=>activeFilter==='todo'?t.status!=='done':activeFilter==='done'?t.status==='done':true).forEach(t=>{const isNow=t===nowTask&&isCurrent;html+=`<div class="task-row ${t.status==='blocking'?'block-t':isNow?'now-t':''}"><div class="tr-ic ${sC[t.status]||'ti-plan'}">${sI[t.status]||'·'}</div><div><div class="tr-name">${t.name}</div>${t.dep?`<div class="tr-note">needs: ${t.dep}</div>`:''}<div class="tr-note">${t.note}</div></div><div class="tr-comp">${t.comp}</div><div class="bdg ${sB[t.status]||'b-plan'}">${sL[t.status]||'planned'}</div></div>`;});html+='<div style="height:40px"></div>';document.getElementById('pdetail').innerHTML=html;}
+function setPhase(id){activePhase=id;renderPNav();renderPDetail();}
+function setFlt(f){activeFilter=f;renderPDetail();}
+
+const layers=[{id:'data',name:'Data Layer',status:'live',tag:'infra',expanded:false,phase:'p1',components:[{name:'PostgreSQL',file:'helix-postgres',status:'live',desc:'Primary relational store. Conversations, chunks, KB entries, users.',endpoints:[]},{name:'Neo4j',file:'helix-neo4j',status:'live',desc:'Knowledge graph. Entities, relationships, ADR nodes, intent chains.',endpoints:['GET /api/v1/knowledge/graph','POST /api/v1/knowledge/entity']},{name:'ChromaDB',file:'helix-chromadb',status:'live',desc:'Vector similarity search.',endpoints:[]},{name:'Redis',file:'helix-redis',status:'live',desc:'Cache. Session state, § dict sync.',endpoints:[]},{name:'Embeddings',file:'helix-embeddings',status:'live',desc:'Embedding generation. Feeds ChromaDB.',endpoints:['POST /embed']}]},{id:'ingestion',name:'Ingestion',status:'live',tag:'core',expanded:true,phase:'p2',components:[{name:'Conversations router',file:'routers/conversations.py',status:'live',desc:'CRUD for conversation records.',endpoints:['GET /api/v1/conversations','POST /api/v1/conversations']},{name:'Exchange router',file:'routers/exchange.py',status:'live',desc:'Ingest full prompt+response exchange.',endpoints:['POST /api/v1/observer/exchange']},{name:'Intake router',file:'routers/intake.py',status:'live',desc:'Bulk ingestion for backfill.',endpoints:['POST /api/v1/intake']},{name:'External ingest',file:'routers/ext_ingest.py',status:'live',desc:'Receives data from MemBrain + MCP.',endpoints:['POST /api/v1/ext/ingest']},{name:'Shard service',file:'services/shard.py',status:'live',desc:'One shard record per turn. Delta only.',endpoints:[]},{name:'Diff engine',file:'services/diff.py',status:'live',desc:'Semantic delta between shards.',endpoints:[]},{name:'Chunker',file:'services/chunker.py',status:'live',desc:'Splits conversation text into chunks.',endpoints:[]},{name:'Turn flush',file:'routers/turn_flush.py',status:'live',desc:'Flushes pending turn data.',endpoints:['POST /api/v1/turn/flush']}]},{id:'intelligence',name:'Intelligence',status:'partial',tag:'intelligence',expanded:true,phase:'p3',components:[{name:'Haiku service',file:'services/haiku.py',status:'live',desc:'LLM enrichment via OpenRouter. Summarize, classify, extract entities + decisions. Circuit breaker included.',endpoints:[]},{name:'Observer router',file:'routers/observer.py',status:'live',desc:'Captures all tool calls. Single throat for all data.',endpoints:['POST /api/v1/observer/log','GET /api/v1/observer/actions/recent']},{name:'Assembler service',file:'services/assembler.py',status:'partial',desc:'Concept-based composition. Snaps Forge atoms into molecules.',endpoints:[]},{name:'Scanner router',file:'routers/scan.py',status:'live',desc:'AST atom scan on file writes.',endpoints:['POST /api/v1/scan']},{name:'Synapse router',file:'routers/synapse.py',status:'partial',desc:'Channel processor. Sequential now, concurrency planned.',endpoints:['POST /api/v1/synapse/process']},{name:'Worker',file:'services/worker.py',status:'live',desc:'Background job runner.',endpoints:[]},{name:'Event bus',file:'services/event_bus.py',status:'live',desc:'Async event routing.',endpoints:[]}]},{id:'knowledge',name:'Knowledge',status:'live',tag:'knowledge',expanded:false,phase:'p3',components:[{name:'KB router',file:'routers/kb.py',status:'live',desc:'CRUD for Working KB documents.',endpoints:['GET /api/v1/kb/search','POST /api/v1/kb/documents']},{name:'Knowledge router',file:'routers/knowledge.py',status:'live',desc:'KG query. Entity lookup, relationship traversal.',endpoints:['GET /api/v1/knowledge/search']},{name:'Neo4j store',file:'services/neo4j_store.py',status:'live',desc:'entity_upsert, relationship_create, traversal.',endpoints:[]},{name:'BM25 store',file:'services/bm25_store.py',status:'live',desc:'Keyword search over chunks.',endpoints:[]},{name:'Vector store',file:'services/vector_store.py',status:'live',desc:'ChromaDB client. Semantic search.',endpoints:[]}]},{id:'compression',name:'Compression',status:'live',tag:'compression',expanded:false,phase:'p5',components:[{name:'Compression router',file:'routers/compression.py',status:'live',desc:'Applies compression profiles.',endpoints:['POST /api/v1/compress']},{name:'Language compression',file:'services/language_compression.py',status:'live',desc:'Core § substitution engine.',endpoints:[]},{name:'Phrase promoter',file:'services/phrase_promoter.py',status:'live',desc:'Promotes high-recurrence phrases to § dict.',endpoints:[]},{name:'Dictionary service',file:'services/dictionary.py',status:'live',desc:'Manages § symbol dict. Synced to Redis.',endpoints:[]},{name:'Compression profiles',file:'services/compression_profiles.py',status:'live',desc:'Named presets: aggressive, balanced, minimal.',endpoints:[]}]},{id:'runtime',name:'Runtime',status:'live',tag:'runtime',expanded:false,phase:'p4',components:[{name:'Helix Cortex',file:'helix-cortex',status:'live',desc:'Main FastAPI app. Port 9050.',endpoints:['GET /health','GET /api/v1/master/status']},{name:'Action router',file:'routers/action.py',status:'live',desc:'Helix Act — trigger actions programmatically.',endpoints:['POST /api/v1/act']},{name:'Scheduler',file:'services/scheduler.py',status:'live',desc:'Cron manager inside Cortex.',endpoints:[]},{name:'MCP layer',file:'helix-mcp:9096',status:'live',desc:'v2.0 — Single MCP surface. 33 tools proxy to cortex REST + Forge. Claude → filter → provisioner → helix-mcp → cortex:9050.',endpoints:['/mcp (streamable-http)']},{name:'Injection router',file:'routers/inject.py',status:'live',desc:'Serves MemBrain Tier 1 context.',endpoints:['GET /api/v1/inject/tier1']}]},{id:'auth',name:'Auth / Multi-tenant',status:'partial',tag:'auth',expanded:false,phase:'p4',components:[{name:'Auth router',file:'routers/auth.py',status:'partial',desc:'Session auth, token validation.',endpoints:['POST /api/v1/auth/login']},{name:'Tenants router',file:'routers/tenants.py',status:'partial',desc:'Tenant CRUD.',endpoints:['GET /api/v1/tenants']},{name:'Register router',file:'routers/register.py',status:'partial',desc:'New tenant + user registration.',endpoints:['POST /api/v1/register']},{name:'Tenant auth',file:'services/tenant_auth.py',status:'partial',desc:'Per-tenant auth logic.',endpoints:[]},{name:'MemBrain auth',file:'services/membrain_auth.py',status:'partial',desc:'Auth for MemBrain extension.',endpoints:[]}]},{id:'client',name:'Client / Frontend',status:'partial',tag:'client',expanded:false,phase:'p4',components:[{name:'MemBrain Extension',file:'memory-ext/',status:'live',desc:'v0.5.2. Tier 1 injection on every claude.ai message.',endpoints:[]},{name:'helixmaster site',file:'helixmaster.millyweb.com',status:'live',desc:'This site. LIVE — /api/v1/master/status built and returning real data. Auto-updates on refresh.',endpoints:[]},{name:'helix-status',file:'helix-status',status:'live',desc:'status.helix.millyweb.com',endpoints:[]},{name:'Widget router',file:'routers/widget.py',status:'live',desc:'Embeddable Helix widget.',endpoints:['GET /widget']}]}];
+let activeLayer='all',selComp=null,selLayerId=null,sbTab='info';
+const dotCls={live:'s-live',partial:'s-partial',planned:'s-planned'};
+function renderLayerPills(){const el=document.getElementById('layer-pills');let html=`<div class="lpill ${activeLayer==='all'?'active':''}" onclick="setLayer('all')">all layers</div>`;layers.forEach(l=>html+=`<div class="lpill ${activeLayer===l.id?'active':''}" onclick="setLayer('${l.id}')">${l.name}</div>`);el.innerHTML=html;}
+function renderLayers(){const el=document.getElementById('layer-list');const visible=activeLayer==='all'?layers:layers.filter(l=>l.id===activeLayer);el.innerHTML=visible.map(l=>`<div class="layer-group"><div class="layer-header" onclick="togLayer('${l.id}')"><div class="layer-arrow ${l.expanded?'':'cl'}">▾</div><div class="layer-dot ${dotCls[l.status]}"></div><div class="layer-name">${l.name}</div><div class="layer-count" style="margin-right:8px">${l.components.length}</div><div class="layer-tag">${l.tag}</div></div><div class="layer-body ${l.expanded?'open':''}">${l.components.map(c=>`<div class="comp-row ${selComp===c.name?'active':''}" onclick="selComponent('${c.name}','${l.id}','${l.name}','${l.phase}')"><div class="cr-dot ${dotCls[c.status]}"></div><div class="cr-name">${c.name}</div><div class="cr-file">${c.file}</div><div class="cr-status cs-${c.status}">${c.status}</div></div>`).join('')}</div></div>`).join('');}
+function togLayer(id){const l=layers.find(x=>x.id===id);if(l)l.expanded=!l.expanded;renderLayers();}
+function setLayer(id){activeLayer=id;if(id!=='all'){const l=layers.find(x=>x.id===id);if(l)l.expanded=true;}renderLayerPills();renderLayers();}
+function selComponent(name,layerId,layerName,phaseId){selComp=name;selLayerId=layerId;sbTab='info';renderLayers();const l=layers.find(x=>x.id===layerId);const c=l&&l.components.find(x=>x.name===name);if(!c)return;const sb=document.getElementById('comp-sb');sb.innerHTML=`<div class="sbh"><div class="sb-lbl">component</div><div class="sb-title">${c.name}</div><div class="sb-layer">${layerName} · ${c.file}</div><div class="sb-tabs"><div class="sbt ${sbTab==='info'?'active':''}" onclick="swCSb('info','${name}','${layerId}','${layerName}','${phaseId}')">info</div><div class="sbt ${sbTab==='endpoints'?'active':''}" onclick="swCSb('endpoints','${name}','${layerId}','${layerName}','${phaseId}')">endpoints (${c.endpoints.length})</div></div></div><div class="comp-sb-body" id="csb-body"></div><div class="btn-row"><button class="bp" onclick="openModal('New spec — ${c.name}','spec')">+ spec doc</button><button class="bg hl" onclick="jumpToPhase('${phaseId}')">roadmap → ph${phaseId.replace('p','')}</button></div>`;renderCSbBody(c,phaseId);}
+function swCSb(tab,name,layerId,layerName,phaseId){sbTab=tab;selComponent(name,layerId,layerName,phaseId);}
+function jumpToPhase(phaseId){activePhase=phaseId;document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-roadmap').classList.add('active');document.querySelectorAll('.top-tab')[0].classList.add('active');renderPNav();renderPDetail();}
+function renderCSbBody(c,phaseId){const body=document.getElementById('csb-body');if(!body)return;if(sbTab==='info'){body.innerHTML=`<div class="ds"><div class="ds-lbl">Description</div><div style="font-family:var(--sans);font-size:12px;color:var(--text);line-height:1.75">${c.desc}</div></div><div class="ds"><div class="info-row"><div class="ir-k">file</div><div class="ir-v">${c.file}</div></div><div class="info-row"><div class="ir-k">status</div><div class="ir-v"><span class="cr-status cs-${c.status}">${c.status}</span></div></div><div class="info-row"><div class="ir-k">roadmap phase</div><div class="ir-v" style="cursor:pointer;color:var(--accent)" onclick="jumpToPhase('${phaseId}')">Phase ${phaseId.replace('p','')} →</div></div><div class="info-row"><div class="ir-k">endpoints</div><div class="ir-v">${c.endpoints.length}</div></div></div>`;}else{body.innerHTML=`<div class="ds"><div class="ds-lbl">Endpoints</div>${c.endpoints.length?c.endpoints.map(e=>`<div class="ep-item"><code>${e}</code></div>`).join(''):`<div style="font-family:var(--mono);font-size:11px;color:var(--text-dim)">internal service</div>`}</div>`;}} 
+
+const staticAdrs=[{id:'ADR-001',group:'Storage',title:'Storage writes must not depend on Helix availability — use MinIO directly',badge:'b-d',meta:'2026-03-21 · helix_file_write is supplemental, not critical path'},{id:'ADR-003',group:'Ingestion',title:'turn_processor splits into shard() and flush() peer fns',badge:'b-h',meta:'2026-03-13 · routers/turn_flush.py + services/shard.py'},{id:'ADR-007',group:'Ingestion',title:'Eliminate flush window — shard every turn for maximum granularity',badge:'b-h',meta:'2026-03-15 · recurrence: 3 sessions'},{id:'ADR-012',group:'Intelligence',title:'ADR template extended with 7-node chain: chunk_id, context_snapshot, code_ref, pattern_id, outcome, recurrence, supersession',badge:'b-d',meta:'2026-03-21 · Dart General/Specs'},{id:'ADR-013',group:'MCP Architecture',title:'helix-mcp is the single MCP surface — cortex is backend-only REST API, no direct MCP exposure',badge:'b-d',meta:'2026-03-22 · helix-mcp v2.0. 33 tools. Claude → filter → provisioner → helix-mcp → cortex REST'},{id:'ADR-014',group:'Infrastructure',title:'pg_sync.sqlite_conn() must never be used with SQLite-only syntax — always use sqlite3.connect() directly for SQLite ops',badge:'b-d',meta:'2026-03-22 · Fixed in ops.py, archive.py, kb.py, knowledge.py, scheduler.py'}];
+function renderAdrs(adrs){const el=document.getElementById('adr-list');if(!el)return;const groups={};adrs.forEach(a=>{if(!groups[a.group])groups[a.group]=[];groups[a.group].push(a);});el.innerHTML=Object.entries(groups).map(([g,list])=>`<div class="g-lbl">${g}</div>${list.map(a=>`<div class="ac"><div class="ac-h"><div class="ac-id">${a.id}</div><div class="ac-t">${a.title}</div><div class="badge ${a.badge}">${a.badge==='b-d'?'decided':a.badge==='b-h'?'held':'planned'}</div></div><div class="ac-m">${a.meta}</div></div>`).join('')}`).join('');}
+
+let questions=[{id:1,text:'Build /api/v1/master/status endpoint — this is what makes the site live',proj:'runtime · done',icon:'!',status:'resolved'},{id:2,text:'helixmaster.millyweb.com needs auth before going public — basic auth or Helix session token?',proj:'security · ADR pending',icon:'!',status:'open'},{id:3,text:'Haiku reconciler: Helix Act endpoint or standalone VPS1 script?',proj:'reconciler · ADR pending',icon:'?',status:'open'},{id:4,text:'Auth/multi-tenant layer: tenants.py + tenant_auth.py — built or stubbed?',proj:'auth · needs verification',icon:'?',status:'open'}];
+let nextQId=5;
+function renderQuestions(){const el=document.getElementById('q-list');if(!el)return;const open=questions.filter(q=>q.status==='open');const closed=questions.filter(q=>q.status!=='open');let html='';if(open.length)html+=open.map(q=>qHtml(q)).join('');if(closed.length){html+=`<div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:.06em;text-transform:uppercase;margin:16px 0 8px">resolved (${closed.length})</div>`;html+=closed.map(q=>qHtml(q)).join('');}el.innerHTML=html;}
+function qHtml(q){const ic={'!':'color:var(--danger)','?':'color:var(--warn)'}[q.icon]||'color:var(--warn)';const sl={open:'',resolved:'✓ resolved',needs_adr:'△ needs ADR',answered:'◈ answered'};return `<div class="qi ${q.status!=='open'?'resolved':''}" id="q-${q.id}"><div class="qi-top"><div class="qic" style="${ic}">${q.icon}</div><div><div class="qt">${q.text}${q.status!=='open'?` <span style="color:var(--live);font-size:10px">${sl[q.status]}</span>`:''}</div><div class="qp">${q.proj}</div></div></div>${q.status==='open'?`<div class="q-actions"><button class="qa-btn qa-resolved" onclick="resolveQ(${q.id},'resolved')">✓ resolved</button><button class="qa-btn qa-adr" onclick="resolveQ(${q.id},'needs_adr')">△ needs ADR</button><button class="qa-btn qa-answered" onclick="resolveQ(${q.id},'answered')">◈ answered</button></div>`:''}</div>`;}
+function resolveQ(id,status){const q=questions.find(x=>x.id===id);if(q){q.status=status;renderQuestions();}}
+function addQuestion(){const text=document.getElementById('q-new-text').value.trim();const proj=document.getElementById('q-new-proj').value.trim()||'general';if(!text)return;questions.unshift({id:nextQId++,text,proj,icon:'?',status:'open'});document.getElementById('q-new-text').value='';document.getElementById('q-new-proj').value='';renderQuestions();}
+
+function openModal(title,type){document.getElementById('modal-title').textContent=title;document.getElementById('modal-doc-type').value=type||'spec';document.getElementById('modal-doc-title').value='';document.getElementById('modal-doc-body').value='';document.getElementById('modal-doc-comp').value='';document.getElementById('modal').classList.add('open');setTimeout(()=>document.getElementById('modal-doc-title').focus(),100);}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+function saveDoc(){const title=document.getElementById('modal-doc-title').value.trim();if(!title){alert('Title required');return;}alert(`In live site: POST to ${HELIX_BASE}/api/v1/kb/documents\nTitle: ${title}`);closeModal();}
+document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeModal();});
+
+const jEntries=[{date:'2026-03-22',session:'helix-mcp-v2',title:'helix-mcp v2.0 — single MCP surface, all tools centralized through manifest → provisioner → helix-mcp → cortex REST',body:'Rewrote helix-mcp server.py with 33 tools (up from 10). All file ops, search, intelligence writes, language/compression, and scheduler tools now proxy to cortex REST endpoints. Added POST /api/v1/archive/record to cortex. Removed cortex MCP mount entirely — /mcp returns 404. Fixed pg_sync/SQLite bugs across 5 router/service files: VACUUM INTO, sqlite_master, FTS5 MATCH, and ? placeholder all replaced with proper Postgres equivalents. Provisioner manifest updated: helix-workspace renamed to helix, old cortex 25-tool entry removed, 47 servers total. 24/24 tool groups tested and passing.',decisions:[{text:'helix-mcp is the ONLY MCP surface — cortex exposes REST only (ADR-013)',status:'live'},{text:'pg_sync.sqlite_conn() must never be used with SQLite-only syntax (ADR-014)',status:'live'},{text:'Postgres FTS: use plainto_tsquery() not FTS5 MATCH syntax',status:'live'}],build_plan:[{text:'Build /api/v1/master/status endpoint',status:'next'},{text:'Fix Observer flush failures (fetch failed — non-fatal)',status:'next'},{text:'Wire Haiku reconciler to patch status JSON',status:'plan'}],glance:'Architecture is now clean. One MCP surface. Full pipeline on every write. 24/24 tests passing. The last remaining foundation item is the /api/v1/master/status endpoint to make this site fully live.',tags:['helix-mcp','mcp','architecture','consolidation','pg_sync']},{date:'2026-03-21',session:'722e9fa7',title:'helixmaster v5 deployed — real component audit + dynamic status wired',body:'helixmaster v5 deployed to helixmaster.millyweb.com. Site built from real codebase (8 layers, 40+ components from ls + docker ps). fetchLiveData() wired to /api/v1/master/status — site will update automatically once that endpoint is built. All 5 nice-to-haves implemented: live refresh, inline editor, last session strip, cross-links, question resolution.',decisions:[{text:'helix_file_write deploy_path is the correct tool for large file deploys',status:'live'},{text:'MinIO-direct writes for permanent docs (ADR-001)',status:'live'},{text:'/api/v1/master/status endpoint is Phase 4 next task',status:'live'}],build_plan:[{text:'Build /api/v1/master/status on Helix Cortex',status:'next'},{text:'Wire Haiku reconciler to patch status JSON',status:'plan'}],glance:'Site is live but static. One endpoint makes it fully dynamic. That is the next build task.',tags:['helixmaster','deploy','v5','dynamic']}];
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function jeType(title){
+  var t=(title||'').toLowerCase();
+  if(/fix|bug|broken|crash|error|issue|patch|repair|invalid|syntax/.test(t)) return {cls:'jt-fix',label:'fix'};
+  if(/debug|diagnos|investigat|trace|hunt|root cause/.test(t)) return {cls:'jt-debug',label:'debug'};
+  if(/deploy|vps|nginx|docker|server|routing|sync|ssl|traefik|daemon|infra/.test(t)) return {cls:'jt-infra',label:'infra'};
+  if(/doc|index|readme|skill|handoff|journal|reference|guide/.test(t)) return {cls:'jt-docs',label:'docs'};
+  if(/style|spacing|css|color|layout|ui|design|visual/.test(t)) return {cls:'jt-style',label:'style'};
+  if(/data|db|schema|migration|table|registry|postgres|sql/.test(t)) return {cls:'jt-data',label:'data'};
+  return {cls:'jt-feat',label:'feat'};
+}
+function renderJournal(){
+  const el=document.getElementById('jlist');
+  if(!el)return;
+  try{
+    el.innerHTML=jEntries.map(function(e){
+      var decs=(e.decisions||[]).map(function(d){
+        var t=d.text.toLowerCase();
+        var cls='dec-live';
+        var lbl=d.status||'live';
+        if(/fix|patch|correc|repair|resolv|broken|bug|revert/.test(t)){cls='dec-fix';lbl='fix';}
+        else if(/feat|add|new|build|creat|implement|wire|connect|integrat/.test(t)){cls='dec-feat';lbl='feat';}
+        else if(/arch|decision|adr|pattern|never|always|must|rule|standard/.test(t)){cls='dec-arch';lbl='arch';}
+        else if(/remov|kill|deprecat|disable|delet|stop|retire|shut/.test(t)){cls='dec-kill';lbl='kill';}
+        else if(/deploy|docker|vps|nginx|traefik|container|server|infra|sync|scp/.test(t)){cls='dec-infra';lbl='infra';}
+        else if(/doc|index|skill|journal|handoff|readme|comment/.test(t)){cls='dec-docs';lbl='docs';}
+        return '<div class="dec-row"><div class="dec-bdg '+cls+'">'+lbl+'</div><div class="dec-txt">'+d.text+'</div></div>';
+      }).join('');
+      var bp=(e.build_plan||[]).map(function(d){
+        return '<div class="dec-row"><div class="dec-bdg db-'+(d.status==='next'?'next':(d.status||'plan'))+'">'+(d.status||'plan')+'</div><div class="dec-txt">'+d.text+'</div></div>';
+      }).join('');
+      var tags=(e.tags||[]).map(function(t){return '<span class="jtag">'+t+'</span>';}).join('');
+      var summary=e.body?'<div class="je-summary">'+e.body+'</div>':'';
+      var glance=e.glance&&e.glance.length>5?'<div class="glance"><div class="g-lbl2">final glance</div><div style="font-family:var(--sans);font-size:12px;color:var(--text);line-height:1.6">'+e.glance+'</div></div>':'';
+      return '<div class="je">'
+        +'<div class="je-meta">'+(e.date||'')+' — <span style="color:var(--text-dim)">'+(e.session||'')+'</span></div>'
+        +function(){var tp=jeType(e.title);return '<div class="je-type '+tp.cls+'">'+tp.label+'</div>';}()+('<div class="je-title" style="color:'+({feat:'#a5b4fc',arch:'#fcd34d',fix:'#fca5a5',infra:'#5eead4',rule:'#c084fc',live:'#86efac',data:'#7dd3fc'}[(e.decisions&&e.decisions[0]&&e.decisions[0].status)||'feat']||'#e2e8f0')+'">'+(e.title||'(untitled)')+'</div>')
+        +summary
+        +(decs?'<div class="j-sec-lbl">Key decisions</div><div style="margin-bottom:11px">'+decs+'</div>':'')
+        +(bp?'<div class="j-sec-lbl">Added to build plan</div><div style="margin-bottom:11px">'+bp+'</div>':'')
+        +glance
+        +'<div class="jtags">'+tags+'</div>'
+        +'</div>';
+    }).join('');
+  }catch(err){
+    el.innerHTML='<div style="color:var(--danger);padding:20px">Journal error: '+err.message+'</div>';
+  }
+}
+
+function switchTop(id,el){document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.top-tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');el.classList.add('active');}
+
+renderPNav();renderPDetail();renderLayerPills();renderLayers();renderJournal();renderQuestions();renderAdrs(staticAdrs);
+function colorJeTitles(){
+  // Color each je-title based on its first badge type
+  var colors={feat:'#a5b4fc',arch:'#fcd34d',fix:'#fca5a5',infra:'#5eead4',rule:'#c084fc',live:'#86efac',data:'#7dd3fc'};
+  document.querySelectorAll('.je').forEach(function(je){
+    var badge=je.querySelector('.dec-bdg');
+    if(!badge)return;
+    var cls=Array.from(badge.classList).find(function(c){return c.startsWith('db-') && c!=='db-'});
+    if(!cls)return;
+    var type=cls.replace('db-','');
+    var title=je.querySelector('.je-title');
+    if(title && colors[type]) title.style.color=colors[type];
+  });
+}
+
+fetchLiveData();
+setTimeout(colorJeTitles,200);
+</script>
+</body>
+</html>

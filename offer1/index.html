@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stop Losing Jobs to Voicemail | RevenueFirst</title>
+  <meta name="description" content="We set up a system that automatically texts back anyone who calls your business and gets voicemail. Most clients recover 2-3 jobs per month.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #0a0a0b;
+      color: #f5f5f5;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      padding: 1.25rem 2rem;
+      border-bottom: 1px solid #1e1e22;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .logo { font-weight: 700; font-size: 1.1rem; color: #fff; letter-spacing: -0.02em; }
+    .logo span { color: #ef4444; }
+    .nav-cta {
+      background: #ef4444;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: #dc2626; }
+
+    /* HERO */
+    .hero {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
+      text-align: center;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #f87171;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.9rem;
+      border-radius: 100px;
+      margin-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+    }
+    h1 em { color: #ef4444; font-style: normal; }
+    .hero-sub {
+      font-size: 1.15rem;
+      color: #a1a1aa;
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.65;
+    }
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .btn-primary {
+      background: #ef4444;
+      color: #fff;
+      text-decoration: none;
+      padding: 1rem 2.25rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      transition: all 0.2s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: #dc2626; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(239,68,68,0.3); }
+    .cta-note { font-size: 0.8rem; color: #71717a; }
+
+    /* PAIN SECTION */
+    .pain {
+      max-width: 800px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+    }
+    .pain-box {
+      background: #111113;
+      border: 1px solid #1e1e22;
+      border-radius: 16px;
+      padding: 2.5rem;
+    }
+    .pain-box h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+    .pain-list { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+    .pain-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.975rem;
+      color: #a1a1aa;
+    }
+    .pain-list li::before {
+      content: '×';
+      color: #ef4444;
+      font-weight: 700;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+
+    /* HOW IT WORKS */
+    .how {
+      max-width: 800px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #ef4444;
+      margin-bottom: 0.75rem;
+    }
+    .how h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+    .steps { display: flex; flex-direction: column; gap: 1.25rem; }
+    .step {
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      background: #111113;
+      border: 1px solid #1e1e22;
+      border-radius: 12px;
+      padding: 1.5rem;
+    }
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #ef4444;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-content h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .step-content p { font-size: 0.9rem; color: #a1a1aa; line-height: 1.5; }
+
+    /* EXAMPLE TEXT */
+    .example {
+      max-width: 800px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+    .example h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 1.5rem;
+    }
+    .sms-bubble-wrap {
+      background: #111113;
+      border: 1px solid #1e1e22;
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .sms-label { font-size: 0.75rem; color: #71717a; margin-bottom: 0.25rem; }
+    .sms-bubble {
+      background: #1e1e22;
+      border-radius: 12px 12px 12px 4px;
+      padding: 1rem 1.25rem;
+      font-size: 0.925rem;
+      color: #e4e4e7;
+      max-width: 85%;
+      line-height: 1.55;
+    }
+    .sms-bubble.outgoing {
+      background: #ef4444;
+      border-radius: 12px 12px 4px 12px;
+      align-self: flex-end;
+      color: #fff;
+    }
+    .sms-time { font-size: 0.7rem; color: #52525b; text-align: center; }
+
+    /* PRICING */
+    .pricing {
+      max-width: 560px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+      text-align: center;
+    }
+    .pricing h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+    .pricing-sub { color: #a1a1aa; margin-bottom: 2rem; font-size: 0.95rem; }
+    .price-card {
+      background: #111113;
+      border: 2px solid #ef4444;
+      border-radius: 16px;
+      padding: 2.5rem;
+    }
+    .price-amount {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #fff;
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+    .price-amount span { font-size: 1.5rem; vertical-align: top; margin-top: 0.5rem; display: inline-block; }
+    .price-period { color: #71717a; font-size: 0.875rem; margin-bottom: 1.5rem; }
+    .price-features { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 2rem; text-align: left; }
+    .price-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      color: #d4d4d8;
+    }
+    .price-features li::before {
+      content: '✓';
+      color: #22c55e;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .guarantee {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #71717a;
+    }
+
+    /* ABOUT */
+    .about {
+      max-width: 800px;
+      margin: 0 auto 4rem;
+      padding: 0 2rem;
+    }
+    .about-card {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      background: #111113;
+      border: 1px solid #1e1e22;
+      border-radius: 16px;
+      padding: 2rem;
+    }
+    .about-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ef4444, #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .about-text h3 { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.4rem; }
+    .about-text p { font-size: 0.9rem; color: #a1a1aa; line-height: 1.6; }
+
+    /* FINAL CTA */
+    .final-cta {
+      max-width: 600px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+      text-align: center;
+    }
+    .final-cta h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 1rem;
+    }
+    .final-cta p { color: #a1a1aa; margin-bottom: 2rem; }
+
+    footer {
+      border-top: 1px solid #1e1e22;
+      padding: 2rem;
+      text-align: center;
+      color: #52525b;
+      font-size: 0.8rem;
+    }
+    footer a { color: #71717a; text-decoration: none; }
+
+    @media (max-width: 600px) {
+      .about-card { flex-direction: column; }
+      .price-amount { font-size: 2.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="logo">Revenue<span>First</span></div>
+    <a href="#book" class="nav-cta">Book a Free Call</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="badge">For Local Service Businesses</div>
+    <h1>Every Missed Call Is a <em>Job You Lost</em> to Your Competitor</h1>
+    <p class="hero-sub">We set up an automatic text-back system so when someone calls and hits voicemail, they get a text within 60 seconds — keeping them on the line while you're busy.</p>
+    <div class="cta-group">
+      <a href="#book" class="btn-primary">Get a Free 15-Min Demo →</a>
+      <span class="cta-note">No sales pitch. We'll show you exactly how it works.</span>
+    </div>
+  </section>
+
+  <!-- PAIN -->
+  <section class="pain">
+    <div class="pain-box">
+      <h2>Sound familiar?</h2>
+      <ul class="pain-list">
+        <li>You're on a job site, can't answer the phone — caller hangs up and calls your competitor</li>
+        <li>You check voicemail 4 hours later and the person already booked someone else</li>
+        <li>Your crew answers calls inconsistently, and some leads just fall through the cracks</li>
+        <li>You've tried call answering services but they're expensive and impersonal</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how">
+    <div class="section-label">How It Works</div>
+    <h2>Setup takes 2 days. Then it runs forever.</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Someone calls your business and hits voicemail</h3>
+          <p>Your existing phone number, your existing voicemail. Nothing changes on your end.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>They get an automatic text within 60 seconds</h3>
+          <p>A personal-feeling message in your voice lets them know you'll be in touch and gives them a way to respond immediately.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>You get notified and can reply from your phone</h3>
+          <p>The conversation happens over text — no app, no dashboard required. Just reply like a normal text message.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h3>You book the job before they call anyone else</h3>
+          <p>Most clients recover 2–4 jobs per month that would have otherwise been lost. At an average job value of $400–$800, that's real money.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXAMPLE -->
+  <section class="example">
+    <div class="section-label">Real Example</div>
+    <h2>What the customer sees</h2>
+    <div class="sms-bubble-wrap">
+      <div class="sms-label">Incoming call missed — 2:14 PM</div>
+      <div class="sms-time">2:14 PM</div>
+      <div class="sms-bubble">
+        Hey, this is Ryan at Pacific Plumbing — sorry I missed your call, I'm out on a job right now. I'd love to help. What are you needing done? I'll get back to you ASAP. — Ryan
+      </div>
+      <div class="sms-bubble outgoing">
+        Hi! My kitchen sink has been leaking for a week, need someone ASAP
+      </div>
+      <div class="sms-bubble">
+        Got it — I can have someone out tomorrow morning. Does 9am work for you?
+      </div>
+      <div class="sms-bubble outgoing">
+        Perfect, yes!
+      </div>
+      <div class="sms-time" style="margin-top:0.5rem">Job booked ✓</div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="section-label">Investment</div>
+    <h2>Simple, one-time pricing</h2>
+    <p class="pricing-sub">No monthly fees. No contracts. Pay once, use forever.</p>
+    <div class="price-card">
+      <div class="price-amount"><span>$</span>497</div>
+      <div class="price-period">one-time setup fee</div>
+      <ul class="price-features">
+        <li>Automatic text-back within 60 seconds of missed call</li>
+        <li>Custom message written in your voice</li>
+        <li>Works with your existing phone number</li>
+        <li>You reply directly from your normal phone</li>
+        <li>Full setup and testing — live within 48 hours</li>
+        <li>30-day support included</li>
+      </ul>
+      <a href="#book" class="btn-primary" style="width:100%;text-align:center;display:block;">Book a Free Demo →</a>
+      <p class="guarantee">If you don't recover the cost of setup in the first 60 days, I'll refund you. Simple as that.</p>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about">
+    <div class="about-card">
+      <div class="about-avatar">RM</div>
+      <div class="about-text">
+        <h3>Ryan Milly — MW Development, Newberg OR</h3>
+        <p>I ran service businesses in the Pacific Northwest for over 10 years — moving companies, Christmas lights installation, home services. I built this system because I was losing jobs to voicemail and I couldn't afford an answering service. Now I set it up for other service businesses across Oregon. I'm not a software company — I'm someone who's been in the truck and knows what it actually costs to miss a call.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta" id="book">
+    <h2>See it live in 15 minutes</h2>
+    <p>Book a free demo call. I'll show you exactly how it works, what the customer sees, and whether it makes sense for your business. No pitch, no pressure.</p>
+    <!-- Replace with your actual Calendly embed link -->
+    <a href="https://calendly.com/ryan-millyweb/15min" class="btn-primary" target="_blank" rel="noopener">
+      Book Your Free Demo →
+    </a>
+    <p style="margin-top:1rem;font-size:0.8rem;color:#52525b;">Or email directly: <a href="mailto:ryan@millyweb.com" style="color:#a1a1aa;">ryan@millyweb.com</a></p>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 MW Development · Newberg, Oregon · <a href="mailto:ryan@millyweb.com">ryan@millyweb.com</a></p>
+  <p style="margin-top:0.5rem;">This is a commercial email. To unsubscribe, reply with "unsubscribe". · 123 Main St, Newberg, OR 97132</p>
+</footer>
+
+</body>
+</html>

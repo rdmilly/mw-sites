@@ -1,6 +1,6 @@
 # mw-sites
 
-All MW Development static sites in one repo.
+All MW Development static sites.
 
 | Directory | Domain | Description |
 |-----------|--------|-------------|
@@ -8,17 +8,13 @@ All MW Development static sites in one repo.
 | `helixcode/` | helixcode.app | Helix brand site |
 | `build/` | build.helixcode.app | Helix build/pipeline pages |
 | `revenuefirst/` | revenuefirst.ai | RevenueFirst.AI landing page |
-| `signal/` | signal.millyweb.com | Personal knowledge blog — video summaries |
-| `adventures-of-shanghai/` | aos.millyweb.com | Adventures of Shanghai content brand |
-| `canvas/` | canvas.millyweb.com | AI chat canvas (FastAPI + OpenRouter) |
+| `offer1/` | offer1.revenuefirst.ai | RF.AI offer page |
+| `cockpit/` | cockpit.millyweb.com | Ops dashboard UI |
+| `justlittlesteps/` | justlittlesteps.com | Nanny business site (Vite app) |
+| `helixmaster-landing/` | helixmaster.millyweb.com | Helix legacy landing |
+| `adventures-of-shanghai/` | aos.millyweb.com | AOS content brand plan page |
 
-## Deploy
-
-All static sites serve via the `helixcode-sites` Nginx container on VPS2.
-Canvas runs its own FastAPI container at canvas.millyweb.com.
-
-## Design tokens (shared)
-
-- Portfolio: `#FAF7F2` bg, `#B85C38` terracotta, Newsreader/Playfair/Caveat
-- Helix: dark navy + crimson `#c41e3a`
-- Signal: `#faf9f7` paper, `#c41e3a` accent, Cormorant Garamond serif
+## NOT here (separate repos)
+- `signal` → video pipeline app — own repo needed
+- `canvas` → AI chat tool — own repo needed
+- `membrain` → in helix/membrain

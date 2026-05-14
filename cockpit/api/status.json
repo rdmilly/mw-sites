@@ -1,0 +1,64 @@
+{
+  "nodes": {
+    "vps1": {
+      "status": "healthy",
+      "disk_pct": 49,
+      "ram_pct": 16,
+      "cpu_pct": 2.3,
+      "containers": 20,
+      "load": 0.35,
+      "uptime": "5d 8h"
+    },
+    "vps2": {
+      "status": "warning",
+      "disk_pct": 61,
+      "ram_pct": 57,
+      "cpu_pct": 8.2,
+      "containers": 47,
+      "load": 1.23,
+      "uptime": "6d 2h"
+    },
+    "contabo": {
+      "status": "idle",
+      "disk_pct": 4,
+      "ram_pct": 5,
+      "cpu_pct": 0,
+      "containers": 0,
+      "load": 0,
+      "uptime": "4d 1h"
+    },
+    "clair": {
+      "status": "connected"
+    },
+    "dave": {
+      "status": "connected"
+    }
+  },
+  "revenue": {
+    "mrr": 0,
+    "target": 200,
+    "clients": 0,
+    "leads_email": 32,
+    "leads_phone": 55779,
+    "skills": 7
+  },
+  "checklist": {
+    "activation": {
+      "done": 1,
+      "total": 9
+    },
+    "infra": {
+      "done": 0,
+      "total": 6
+    },
+    "revenue": {
+      "done": 0,
+      "total": 4
+    },
+    "product": {
+      "done": 0,
+      "total": 3
+    }
+  },
+  "updated": "2026-04-26T05:20:00Z"
+}
